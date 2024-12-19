@@ -18,7 +18,7 @@ public class WiseSayingControllerTest {
     @BeforeEach
     void beforeEach() {
         AppTest.clear();
-        controller = new WiseSayingController();
+        controller = WiseSayingController.getInstance();
         outContent = TestUtil.setOutToByteArray();
     }
 

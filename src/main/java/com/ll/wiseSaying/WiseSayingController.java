@@ -4,7 +4,13 @@ import java.util.*;
 
 public class WiseSayingController {
 
-    private final WiseSayingService wiseSayingService = new WiseSayingService();
+    private final static WiseSayingController instance = new WiseSayingController();
+    private WiseSayingController() {}
+    public static synchronized WiseSayingController getInstance() {
+        return instance;
+    }
+
+    private final WiseSayingService wiseSayingService = WiseSayingService.getInstance();
 
     public void handleCommandLine(String cmd, Scanner scanner) {
 

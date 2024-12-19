@@ -4,7 +4,13 @@ import java.util.List;
 
 public class WiseSayingService {
 
-    private final WiseSayingRepository wiseSayingRepository = new WiseSayingRepository();
+    private final static WiseSayingService instance = new WiseSayingService();
+    private WiseSayingService() {}
+    public static synchronized WiseSayingService getInstance() {
+        return instance;
+    }
+
+    private final WiseSayingRepository wiseSayingRepository = WiseSayingRepository.getInstance();
 
     public WiseSaying register(String content, String author) {
         return wiseSayingRepository.save(content, author);

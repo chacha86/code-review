@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class App {
 
     private final Scanner scanner = new Scanner(System.in);
-    private final WiseSayingController wiseSayingController = new WiseSayingController();
+    private final WiseSayingController wiseSayingController = WiseSayingController.getInstance();
 
     public void run() {
         System.out.println("== 명언 앱 ==");

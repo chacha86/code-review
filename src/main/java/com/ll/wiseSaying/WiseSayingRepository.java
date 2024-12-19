@@ -11,13 +11,8 @@ import static java.nio.file.Files.readAllBytes;
 
 public class WiseSayingRepository {
 
-    private static final String DBPATH = "db/wiseSaying";
-
-    private int lastId = 0;
-    private final List<WiseSaying> wiseSayingList = new ArrayList<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public WiseSayingRepository() {
+    private final static WiseSayingRepository instance = new WiseSayingRepository();
+    private WiseSayingRepository() {
         File folder = new File(DBPATH);
         if (!folder.exists()) {
             folder.mkdirs();
@@ -25,6 +20,15 @@ public class WiseSayingRepository {
 
         loadAll();
     }
+    public static synchronized WiseSayingRepository getInstance() {
+        return instance;
+    }
+
+    private static final String DBPATH = "db/wiseSaying";
+
+    private int lastId = 0;
+    private final List<WiseSaying> wiseSayingList = new ArrayList<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public WiseSaying save(String content, String author) {
         lastId++;
