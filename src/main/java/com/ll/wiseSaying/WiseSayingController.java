@@ -5,24 +5,47 @@ import java.util.*;
 public class WiseSayingController {
 
     private final static WiseSayingController instance = new WiseSayingController();
-    private WiseSayingController() {}
+
+    private WiseSayingController() {
+    }
+
     public static synchronized WiseSayingController getInstance() {
         return instance;
     }
 
     private final WiseSayingService wiseSayingService = WiseSayingService.getInstance();
 
+    private enum command {
+        REGISTER("등록"), SEARCH("목록"), DELETE("삭제"), MODIFY("수정"), BUILD("빌드");
+
+        final String cmd;
+
+        command(String cmd) {
+            this.cmd = cmd;
+        }
+    }
+
+    private enum searchKeyword {
+        KEYWORD_TYPE("keywordType="), KEYWORD("keyword="), PAGE("page="), AND("&"), QUESTION_MARK("?"), ID("id=");
+
+        final String word;
+
+        searchKeyword(String word) {
+            this.word = word;
+        }
+    }
+
     public void handleCommandLine(String cmd, Scanner scanner) {
 
-        if (cmd.equals("등록")) {
+        if (cmd.equals(command.REGISTER.cmd)) {
             registerWiseSaying(scanner);
-        } else if (cmd.startsWith("목록")) {
+        } else if (cmd.startsWith(command.SEARCH.cmd)) {
             searchWiseSaying(cmd);
-        } else if (cmd.startsWith("삭제")) {
+        } else if (cmd.startsWith(command.DELETE.cmd)) {
             deleteWiseSaying(cmd);
-        } else if (cmd.startsWith("수정")) {
+        } else if (cmd.startsWith(command.MODIFY.cmd)) {
             updateWiseSaying(scanner, cmd);
-        } else if (cmd.equals("빌드")) {
+        } else if (cmd.equals(command.BUILD.cmd)) {
             buildData();
         }
     }
@@ -40,9 +63,9 @@ public class WiseSayingController {
     private void searchWiseSaying(String cmd) {
         List<WiseSaying> wiseSayingList = new ArrayList<>();
 
-        if (cmd.contains("keyword") && cmd.contains("keywordType")) {
-            String keywordType = cmd.split("keywordType=")[1].split("&")[0];
-            String keyword = cmd.split("keyword=")[1].split("&")[0];
+        if (cmd.contains(searchKeyword.KEYWORD.word) && cmd.contains(searchKeyword.KEYWORD_TYPE.word)) {
+            String keywordType = cmd.split(searchKeyword.KEYWORD_TYPE.word)[1].split(searchKeyword.AND.word)[0];
+            String keyword = cmd.split(searchKeyword.KEYWORD.word)[1].split(searchKeyword.AND.word)[0];
 
             System.out.println("----------------------");
             System.out.println("검색타입 : " + keywordType);
@@ -63,10 +86,11 @@ public class WiseSayingController {
 
     private void printPagedList(String cmd, List<WiseSaying> wiseSayingList) {
         int pageSize = 5;
-        int page = cmd.contains("page=") ? Integer.parseInt(cmd.split("page=")[1].split("&")[0]) : 1;
+        int page = cmd.contains(searchKeyword.PAGE.word)
+                ? Integer.parseInt(cmd.split(searchKeyword.PAGE.word)[1].split(searchKeyword.AND.word)[0]) : 1;
 
         List<WiseSaying> resultList = wiseSayingService.getPagedWiseSayings(page, pageSize, wiseSayingList);
-        int totalPages = (int) Math.ceil((double) wiseSayingList.size()/pageSize);
+        int totalPages = (int) Math.ceil((double) wiseSayingList.size() / pageSize);
 
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
@@ -90,7 +114,7 @@ public class WiseSayingController {
     }
 
     private void deleteWiseSaying(String cmd) {
-        int id = Integer.parseInt(cmd.split("=")[1]);
+        int id = Integer.parseInt(cmd.split(searchKeyword.ID.word)[1]);
         if (wiseSayingService.deleteById(id)) {
             System.out.println(id + "번 명언이 삭제되었습니다.");
         } else {
@@ -99,7 +123,7 @@ public class WiseSayingController {
     }
 
     private void updateWiseSaying(Scanner scanner, String cmd) {
-        int id = Integer.parseInt(cmd.split("=")[1]);
+        int id = Integer.parseInt(cmd.split(searchKeyword.ID.word)[1]);
         WiseSaying wiseSaying = wiseSayingService.findById(id);
 
         if (wiseSaying == null) {
