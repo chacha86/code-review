@@ -84,6 +84,33 @@ public class CustomList {
         wiseSayings = newList;
     }
 
+    public void saveSingleWiseSaying(WiseSaying wiseSaying) {
+        createDirectoryIfNeeded();
+        String json = "{\n" +
+                "  \"id\": " + wiseSaying.getIdx() + ",\n" +
+                "  \"content\": \"" + wiseSaying.getSaying() + "\",\n" +
+                "  \"author\": \"" + wiseSaying.getAuthor() + "\"\n" +
+                "}";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("db/wiseSaying/" + wiseSaying.getIdx() + ".json"))) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSingleWiseSaying(int idx) {
+        createDirectoryIfNeeded();
+        File file = new File("db/wiseSaying/" + idx + ".json");
+        if (file.exists()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                System.out.println(idx + ".json 파일 삭제 실패!");
+            }
+        } else {
+            System.out.println(idx + ".json 파일이 존재하지 않습니다.");
+        }
+    }
+
     public void saveFile() {
 
         createDirectoryIfNeeded();
@@ -155,8 +182,6 @@ public class CustomList {
 
         for(int i = 0; i < listSize; i++) {
             if(keywordType.equals("content")) {
-                // TODO
-                // getSaying - content 같음(나중에 리펙토링 필요) 초기만들때 이렇게만들어버림 getSaying() - content
                 if(wiseSayings[i].getSaying().contains(keyword)) {
                     searchResult.add(wiseSayings[i]);
                 }

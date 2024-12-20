@@ -45,6 +45,10 @@ public class WiseSayingController {
         String author = scanner.nextLine();
         int id = service.addWiseSaying(saying, author);
         System.out.println(id + "번 명언이 등록되었습니다.");
+
+        WiseSaying wiseSaying = service.getWiseSayings().getWiseSaying(id);
+        // 등록 직후 파일 저장
+        service.getWiseSayings().saveSingleWiseSaying(wiseSaying);
     }
 
     void handleBuild() {
@@ -55,7 +59,6 @@ public class WiseSayingController {
     void handleExit() {
         System.out.println();
         CustomList wiseSayings = service.getWiseSayings();
-        wiseSayings.saveFile();
         service.initWiseSayingService();
         System.out.println("프로그램 다시 시작...");
         System.out.println();
@@ -65,6 +68,12 @@ public class WiseSayingController {
 
     private void handleModify(Scanner scanner, String cmd) {
         String[] splitStr = cmd.split("\\?id=");
+        
+        if(splitStr.length == 1) {
+            System.out.println("잘못된 값 입니다. 다시 입력해 주세요");
+            return;
+        }
+        
         int idx = Integer.parseInt(splitStr[1]);
         WiseSaying curWiseSaying = service.getWiseSayings().getWiseSaying(idx);
 
@@ -81,12 +90,17 @@ public class WiseSayingController {
         String modifyAuthor = scanner.nextLine();
 
         service.getWiseSayings().modifyWiseSaying(idx, modifySaying, modifyAuthor);
+
+        // 저장하면, 수정이되므로
+        service.getWiseSayings().saveSingleWiseSaying(curWiseSaying);
     }
 
     private void handleDelete(String cmd) {
         String[] splitStr = cmd.split("\\?id=");
         int idx = Integer.parseInt(splitStr[1]);
-        service.removeWiseSaying(idx);
+        service.deleteWiseSaying(idx);
+
+        service.getWiseSayings().deleteSingleWiseSaying(idx);
     }
 
     private void handleList(String cmd) {
@@ -136,6 +150,9 @@ public class WiseSayingController {
     }
 
     public void addSampleData(String saying, String author) {
-        service.addWiseSaying(saying, author);
+        int id = service.addWiseSaying(saying, author);
+        WiseSaying wiseSaying = service.getWiseSayings().getWiseSaying(id);
+        // 등록 직후 파일 저장
+        service.getWiseSayings().saveSingleWiseSaying(wiseSaying);
     }
 }
