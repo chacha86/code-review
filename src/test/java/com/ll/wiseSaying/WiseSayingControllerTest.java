@@ -1,3 +1,4 @@
+
 package com.ll.wiseSaying;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,30 +23,30 @@ public class WiseSayingControllerTest {
         app = new App();
     }
 
+    private void runTest(String input, String... expectedOutputs) {
+        Scanner scanner = TestUtil.genScanner(input);
+        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray(); // 이게 먼저 실행되야, scanner의 값을 가져올 수 있습니다.
+
+        app.run(scanner);
+        String output = outputStream.toString().trim();
+
+        for (String expected : expectedOutputs) {
+            assertThat(output).contains(expected);
+        }
+
+        TestUtil.clearSetOutToByteArray(outputStream);
+    }
 
     @Test
     @DisplayName("등록 명령 처리")
     void testRegisterWiseSaying() {
-
         String input = """
             등록
             현재를 사랑하라.
             작자미상
             """;
-        Scanner scanner = TestUtil.genScanner(input);
 
-        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray(); // 이게 먼저 실행되야, scanner의 값을 가져올 수 있습니다.
-
-        app.run(scanner);
-
-        String output = outputStream.toString().trim();
-        assertThat(output)
-                .contains("== 명언 앱 ==")
-                .contains("명언 :")
-                .contains("작가 :")
-                .contains("1번 명언이 등록되었습니다.");
-
-        TestUtil.clearSetOutToByteArray(outputStream);
+        runTest(input, "== 명언 앱 ==", "명언 :", "작가 :", "1번 명언이 등록되었습니다.");
     }
 
     @Test
@@ -61,21 +62,11 @@ public class WiseSayingControllerTest {
             작자미상
             목록
             """;
-        Scanner scanner = TestUtil.genScanner(input);
 
-        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray();
-
-        app.run(scanner);
-
-        String output = outputStream.toString().trim();
-        assertThat(output)
-                .contains("번호 / 작가 / 명언")
-                .contains("----------------------")
-                .contains("2 / 작자미상 / 과거에 집착하지 마라.")
-                .contains("1 / 작자미상 / 현재를 사랑하라.");
-
-        // 5. 출력 리다이렉션 복구
-        TestUtil.clearSetOutToByteArray(outputStream);
+        runTest(input, "번호 / 작가 / 명언"
+                        , "----------------------"
+                        , "2 / 작자미상 / 과거에 집착하지 마라."
+                        , "1 / 작자미상 / 현재를 사랑하라.");
     }
 
     @Test
@@ -93,18 +84,9 @@ public class WiseSayingControllerTest {
             삭제?id=1
             삭제?id=1
             """;
-        Scanner scanner = TestUtil.genScanner(input);
 
-        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray();
-
-        app.run(scanner);
-
-        String output = outputStream.toString().trim();
-        assertThat(output)
-                .contains("1번 명언이 삭제되었습니다.")
-                .contains("1번 명언은 존재하지 않습니다.");
-
-        TestUtil.clearSetOutToByteArray(outputStream);
+        runTest(input, "1번 명언이 삭제되었습니다."
+                , "1번 명언은 존재하지 않습니다.");
     }
 
     // 초기 10개의 임시데이터로 인한 숫자 수정
@@ -128,23 +110,14 @@ public class WiseSayingControllerTest {
             홍길동
             목록
             """;
-        Scanner scanner = TestUtil.genScanner(input);
 
-        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray();
-
-        app.run(scanner);
-
-        String output = outputStream.toString().trim();
-        assertThat(output)
-                .contains("명언(기존) : 과거에 집착하지 마라.")
-                .contains("명언 : ")
-                .contains("작가(기존) : 작자미상")
-                .contains("작가 : ")
-                .contains("번호 / 작가 / 명언")
-                .contains("----------------------")
-                .contains("12 / 홍길동 / 현재와 자신을 사랑하라.");
-
-        TestUtil.clearSetOutToByteArray(outputStream);
+        runTest(input, "명언(기존) : 과거에 집착하지 마라."
+                , "명언 : "
+                , "작가(기존) : 작자미상"
+                , "작가 : "
+                , "번호 / 작가 / 명언"
+                , "----------------------"
+                , "12 / 홍길동 / 현재와 자신을 사랑하라.");
     }
 
     @Test
@@ -161,17 +134,9 @@ public class WiseSayingControllerTest {
             종료
             """;
 
-        Scanner scanner = TestUtil.genScanner(input);
-        ByteArrayOutputStream outputStream = TestUtil.setOutToByteArray();
-        app.run(scanner);
-
-        String output = outputStream.toString().trim();
-        assertThat(output)
-                .contains("11번 명언이 등록되었습니다.")
-                .contains("12번 명언이 등록되었습니다.")
-                .contains("프로그램 다시 시작...");
-
-        TestUtil.clearSetOutToByteArray(outputStream);
+        runTest(input, "11번 명언이 등록되었습니다."
+                , "12번 명언이 등록되었습니다."
+                , "프로그램 다시 시작...");
 
         File lastIdFile = new File("db/wiseSaying/lastId.txt");
         assertThat(lastIdFile.exists()).isTrue();
