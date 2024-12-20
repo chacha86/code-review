@@ -1,6 +1,6 @@
-package TDD.Repository;
+package TDD.test.Repository;
 
-import TDD.main.ProverbRepository;
+import TDD.main.repository.ProverbRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

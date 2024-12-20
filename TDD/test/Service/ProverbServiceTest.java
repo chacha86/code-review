@@ -1,6 +1,6 @@
-package TDD.Service;
+package TDD.test.Service;
 
-import TDD.main.ProverbService;
+import TDD.main.service.ProverbService;
 import org.junit.jupiter.api.Test;
 
 

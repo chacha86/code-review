@@ -1,5 +1,7 @@
-package TDD.main;
+package TDD.main.controller;
 
+
+import TDD.main.service.ProverbService;
 
 public class ProverbController {
 

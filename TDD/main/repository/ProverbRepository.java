@@ -1,4 +1,4 @@
-package TDD.main;
+package TDD.main.repository;
 
 import TDD.Proverb;
 
