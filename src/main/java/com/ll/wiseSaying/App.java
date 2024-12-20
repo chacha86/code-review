@@ -10,7 +10,6 @@ public class App {
         WiseSayingController controller = new WiseSayingController();
         initSampleData(controller);
         System.out.println("== 명언 앱 ==");
-        System.out.println("== 명언 앱 ==");
         controller.handleCommand(scanner);
     }
 
