@@ -1,7 +1,5 @@
 package com.ll.wisesaying.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class WiseSaying implements Comparable<WiseSaying> {
     private int id;
     private String content;

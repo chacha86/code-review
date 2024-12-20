@@ -18,9 +18,10 @@ public class OutputUtil {
     public static final String ENROLLED = "번 명언이 등록되었습니다.";
     public static final String DELETED = "번 명언이 삭제되었습니다.";
     public static final String BUILDED = "파일의 내용이 갱신되었습니다.";
-    public static final String NOT_EXIST = "번 명언은 존재하지 않습니다.";
+    public static final String IDX_NOT_EXIST = "번 명언은 존재하지 않습니다.";
+    public static final String NOT_EXIST = "해당 명언은 존재하지 않습니다.";
     public static final String ILLEGAL_INPUT = "등록, 목록, 삭제, 수정, 빌드 중에 입력해주세요.";
-    public static final String ILLEGAL_CMD = "파라미터 형식으로 작성해주세요.";
+    public static final String ILLEGAL_CMD = "명령어 형식이 올바르지 않습니다.";
 
     public static void printError(String message) {
         System.out.println(message);
