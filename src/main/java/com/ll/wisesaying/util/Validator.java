@@ -22,9 +22,13 @@ public class Validator {
         }
     }
 
-    public static void validateSearch(String[] tokens) {
-        if(tokens.length != 3) {
-            throw new InputException(ILLEGAL_CMD);
+    public static void validatePage(String[] tokens) {
+        if (tokens.length == 2 || tokens.length == 4) {
+            String lastToken = tokens[tokens.length - 1];
+            if (lastToken.chars().anyMatch(c -> !Character.isDigit(c))) {
+                throw new InputException(ILLEGAL_CMD);
+            }
         }
     }
+
 }
