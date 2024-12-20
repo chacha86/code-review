@@ -21,4 +21,10 @@ public class Validator {
             throw new InputException(ILLEGAL_CMD);
         }
     }
+
+    public static void validateSearch(String[] tokens) {
+        if(tokens.length != 3) {
+            throw new InputException(ILLEGAL_CMD);
+        }
+    }
 }
