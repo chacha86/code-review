@@ -6,6 +6,7 @@ import static com.ll.wisesaying.util.OutputUtil.*;
 
 import java.io.IOException;
 
+import com.ll.wisesaying.domain.Search;
 import com.ll.wisesaying.domain.WiseSaying;
 import com.ll.wisesaying.service.WiseSayingService;
 
@@ -40,6 +41,11 @@ public class WiseSayingController {
 
         if (cmd.equals(BUILD)) {
             build();
+            return;
+        }
+
+        if (!cmd.equals(LIST) && cmd.startsWith(LIST)) {
+            search(cmd);
             return;
         }
     }
@@ -92,5 +98,22 @@ public class WiseSayingController {
     public void build() throws IOException {
         wiseSayingService.buildPhrase();
         printlnMessage(ALL_FILE + BUILDED);
+    }
+
+    public void search(String cmd) {
+        Search search = getSearch(cmd);
+
+        printlnMessage(TABLE_SEPARATOR);
+        printMessage(KEYWORD_TYPE);
+        printlnMessage(search.keywordType());
+
+        printMessage(KEYWORD);
+        printlnMessage(search.keyword());
+        printlnMessage(TABLE_SEPARATOR);
+
+        printlnMessage(FORM);
+        printlnMessage(TABLE_SEPARATOR);
+
+        printWiseSayings(wiseSayingService.getWiseSayings(cmd));
     }
 }

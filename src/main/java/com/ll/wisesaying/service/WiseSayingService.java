@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ll.wisesaying.domain.Search;
 import com.ll.wisesaying.domain.WiseSaying;
 import com.ll.wisesaying.repository.WiseSayingRepository;
 
@@ -30,6 +31,11 @@ public class WiseSayingService {
 
     public List<WiseSaying> getWiseSayings() {
         return new ArrayList<>(wiseSayingRepository.getDB().values());
+    }
+
+    public List<WiseSaying> getWiseSayings(String cmd) {
+        Search keyword = getSearch(cmd);
+        return wiseSayingRepository.findWiseSayings(keyword);
     }
 
     public Integer deleteWiseSaying(String cmd) {

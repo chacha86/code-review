@@ -1,7 +1,9 @@
 package com.ll.wisesaying.repository;
 
 import static com.ll.wisesaying.constant.Constant.*;
+import static com.ll.wisesaying.util.InputUtil.*;
 import static com.ll.wisesaying.util.OutputUtil.*;
+import static java.util.stream.Collectors.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.ll.wisesaying.domain.Search;
 import com.ll.wisesaying.domain.WiseSaying;
 import com.ll.wisesaying.exception.IndexException;
+import com.ll.wisesaying.exception.InputException;
 
 public class WiseSayingRepository {
 
@@ -88,7 +92,29 @@ public class WiseSayingRepository {
 
     public void containsWiseSaying(int idx) {
         if (!db.containsKey(idx)) {
-            throw new IndexException(idx + NOT_EXIST);
+            throw new IndexException(idx + IDX_NOT_EXIST);
         }
+    }
+
+    public List<WiseSaying> findWiseSayings(Search search) {
+        List<WiseSaying> wiseSayings = null;
+
+        if(search.keywordType().equals(ENG_CONTENT)) {
+            wiseSayings = db.values().stream()
+                .filter(wiseSaying -> wiseSaying.getContent().contains(search.keyword()))
+                .collect(toList());
+        }
+
+        if(search.keywordType().equals(ENG_AUTHOR)) {
+            wiseSayings = db.values().stream()
+                .filter(wiseSaying -> wiseSaying.getAuthor().contains(search.keyword()))
+                .collect(toList());
+        }
+
+        if(wiseSayings.isEmpty()){
+            throw new InputException(NOT_EXIST);
+        }
+
+        return wiseSayings;
     }
 }
