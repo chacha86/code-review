@@ -10,6 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         new App(
-            new WiseSayingController(new WiseSayingService(new WiseSayingRepository()))).run();
+            new WiseSayingController(new WiseSayingService(new WiseSayingRepository()))
+        ).run();
     }
 }

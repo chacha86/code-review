@@ -20,7 +20,7 @@ public class App {
         printlnMessage(HEADER);
 
         while (true) {
-            String cmd = bf.readLine();
+            String cmd = inputMessage();
 
             if (cmd.equals(END))
                 return;
