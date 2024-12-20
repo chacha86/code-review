@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+group = 'jpabook'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation("org.assertj:assertj-core:3.26.3")
+
+    // Mockito core
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+
+    // Mockito JUnit Jupiter support
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+
+    // Lombok
+    implementation 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    // Jackson Databind (ObjectMapper 포함)
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+
+    // SLF4J API
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+
+    // Logback을 SLF4J 구현으로 사용하는 경우
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+
+    implementation 'org.json:json:20220924'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
