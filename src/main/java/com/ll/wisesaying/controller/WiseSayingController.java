@@ -46,15 +46,15 @@ public class WiseSayingController {
 
     public void register() throws IOException {
         printMessage(WISESAYING);
-        String sentence = inputMessage();
+        String content = inputMessage();
 
-        printMessage(WRITER);
-        String writer = inputMessage();
+        printMessage(AUTHOR);
+        String author = inputMessage();
 
-        WiseSaying wiseSaying = wiseSayingService.inputWiseSaying(sentence, writer);
+        WiseSaying wiseSaying = wiseSayingService.inputWiseSaying(content, author);
         wiseSayingService.saveFile(wiseSaying);
 
-        printlnMessage(wiseSaying.getIdx() + ENROLLED);
+        printlnMessage(wiseSaying.getId() + ENROLLED);
     }
 
     public void list() {
@@ -74,17 +74,17 @@ public class WiseSayingController {
     public void edit(String cmd) throws IOException {
         WiseSaying wiseSaying = wiseSayingService.getWiseSaying(cmd);
 
-        printlnMessage(EXISTING_WISESAYING + wiseSaying.getSentence());
+        printlnMessage(EXISTING_WISESAYING + wiseSaying.getContent());
         printMessage(WISESAYING);
-        String sentence = inputMessage();
+        String content = inputMessage();
 
-        printlnMessage(EXISTING_WRITER + wiseSaying.getWriter());
-        printMessage(WRITER);
-        String writer = inputMessage();
+        printlnMessage(EXISTING_AUTHOR + wiseSaying.getAuthor());
+        printMessage(AUTHOR);
+        String author = inputMessage();
 
-        WiseSaying newWiseSaying = wiseSayingService.editWiseSaying(wiseSaying.getIdx(), sentence, writer);
-        printlnMessage(WISESAYING + newWiseSaying.getSentence());
-        printlnMessage(WRITER + newWiseSaying.getWriter());
+        WiseSaying newWiseSaying = wiseSayingService.editWiseSaying(wiseSaying.getId(), content, author);
+        printlnMessage(WISESAYING + newWiseSaying.getContent());
+        printlnMessage(AUTHOR + newWiseSaying.getAuthor());
 
         wiseSayingService.saveFile(newWiseSaying);
     }

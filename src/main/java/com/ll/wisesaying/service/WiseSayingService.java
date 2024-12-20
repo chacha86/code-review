@@ -19,10 +19,10 @@ public class WiseSayingService {
         this.wiseSayingRepository = wiseSayingRepository;
     }
 
-    public WiseSaying inputWiseSaying(String sentence, String writer) {
+    public WiseSaying inputWiseSaying(String content, String author) {
         int idx = wiseSayingRepository.getNextIdx();
 
-        WiseSaying wiseSaying = new WiseSaying(idx, sentence, writer);
+        WiseSaying wiseSaying = new WiseSaying(idx, content, author);
         wiseSayingRepository.getDB().put(idx, wiseSaying);
 
         return wiseSaying;
@@ -41,8 +41,8 @@ public class WiseSayingService {
         return idx;
     }
 
-    public WiseSaying editWiseSaying(int idx, String sentence, String writer) {
-        WiseSaying newWiseSaying = new WiseSaying(idx, sentence, writer);
+    public WiseSaying editWiseSaying(int idx, String content, String author) {
+        WiseSaying newWiseSaying = new WiseSaying(idx, content, author);
         wiseSayingRepository.getDB().put(idx, newWiseSaying);
 
         return newWiseSaying;
@@ -61,7 +61,7 @@ public class WiseSayingService {
 
     public void saveFile(WiseSaying wiseSaying) throws IOException {
         wiseSayingRepository.saveWiseSaying(wiseSaying);
-        wiseSayingRepository.saveLastIdx(wiseSaying.getIdx());
+        wiseSayingRepository.saveLastIdx(wiseSaying.getId());
     }
 
     public void deleteFile(int idx) throws IOException {

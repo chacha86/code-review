@@ -53,7 +53,7 @@ public class WiseSayingRepository {
 
     public void saveWiseSaying(WiseSaying wiseSaying) throws IOException {
         String content = objectMapper.writeValueAsString(wiseSaying);
-        Files.writeString(getPath(wiseSaying.getIdx()), content);
+        Files.writeString(getPath(wiseSaying.getId()), content);
     }
 
     public WiseSaying getWiseSaying(int idx) throws IOException {

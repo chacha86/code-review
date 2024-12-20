@@ -13,8 +13,8 @@ public class OutputUtil {
     public static final String TABLE_SEPARATOR = "----------------------";
     public static final String WISESAYING = "명언 : ";
     public static final String EXISTING_WISESAYING = "명언(기존) : ";
-    public static final String WRITER = "작가 : ";
-    public static final String EXISTING_WRITER = "작가(기존) : ";
+    public static final String AUTHOR = "작가 : ";
+    public static final String EXISTING_AUTHOR = "작가(기존) : ";
     public static final String ENROLLED = "번 명언이 등록되었습니다.";
     public static final String DELETED = "번 명언이 삭제되었습니다.";
     public static final String BUILDED = "파일의 내용이 갱신되었습니다.";
@@ -36,9 +36,9 @@ public class OutputUtil {
 
     public static void printWiseSayings(List<WiseSaying> wiseSayings) {
         wiseSayings.forEach((wiseSaying) -> {
-            System.out.println(wiseSaying.getIdx()
-                + SEPARATOR + wiseSaying.getSentence()
-                + SEPARATOR + wiseSaying.getWriter());
+            System.out.println(wiseSaying.getId()
+                + SEPARATOR + wiseSaying.getContent()
+                + SEPARATOR + wiseSaying.getAuthor());
         });
     }
 }

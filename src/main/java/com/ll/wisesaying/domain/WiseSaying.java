@@ -3,48 +3,45 @@ package com.ll.wisesaying.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WiseSaying implements Comparable<WiseSaying> {
-    @JsonProperty("id")
-    private int idx;
-    @JsonProperty("content")
-    private String sentence;
-    @JsonProperty("author")
-    private String writer;
+    private int id;
+    private String content;
+    private String author;
 
     public WiseSaying() {
     }
 
-    public WiseSaying(int idx, String sentence, String writer) {
-        this.idx = idx;
-        this.sentence = sentence;
-        this.writer = writer;
+    public WiseSaying(int id, String content, String author) {
+        this.id = id;
+        this.content = content;
+        this.author = author;
     }
 
     @Override
     public int compareTo(WiseSaying o) {
-        return Integer.compare(o.idx, this.idx);
+        return Integer.compare(o.id, this.id);
     }
 
-    public int getIdx() {
-        return idx;
+    public int getId() {
+        return id;
     }
 
-    public void setIdx(int idx) {
-        this.idx = idx;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getSentence() {
-        return sentence;
+    public String getContent() {
+        return content;
     }
 
-    public void setSentence(String sentence) {
-        this.sentence = sentence;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getWriter() {
-        return writer;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setWriter(String writer) {
-        this.writer = writer;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }
