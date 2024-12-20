@@ -1,0 +1,42 @@
+plugins {
+    id 'java' // Java 플러그인 추가
+}
+
+group = 'your.group.id' // 그룹 ID
+version = '1.0-SNAPSHOT' // 프로젝트 버전
+
+repositories {
+    mavenCentral() // Maven 중앙 저장소 사용
+}
+
+dependencies {
+    // JSON 처리 라이브러리
+    implementation 'org.json:json:20220924'
+
+    // JUnit5 테스트 라이브러리
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    // AssertJ 테스트 라이브러리
+    testImplementation 'org.assertj:assertj-core:3.26.3'
+
+    // Mockito 테스트 라이브러리
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+
+    // Lombok 코드 편의성 라이브러리
+    implementation 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24' // Lombok을 사용할 경우
+
+    // Jackson JSON 처리 라이브러리
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+
+    // SLF4J API 라이브러리
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+
+    // Logback 로깅 라이브러리
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+}
+
+test {
+    useJUnitPlatform() // JUnit 플랫폼 설정
+}

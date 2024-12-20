@@ -1,0 +1,33 @@
+# IntelliJ IDEA 관련 파일
+.idea/
+*.iml
+
+# Gradle 관련 파일
+.gradle/
+build/
+out/
+
+# JVM 관련 파일
+*.class
+
+# 로그 파일
+*.log
+
+# 사용자별 설정 파일
+*.user
+*.prefs
+
+# 운영 체제 관련 파일
+.DS_Store
+Thumbs.db
+
+# Gradle Wrapper 관련 파일
+gradle-wrapper.jar
+gradle-wrapper.properties
+gradlew
+gradlew.bat
+
+# 다른 특정 파일
+*.jar
+*.war
+*.ear
