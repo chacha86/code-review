@@ -13,7 +13,7 @@ public class WiseSayingController {
 
         while(true) {
             System.out.print("명령) ");
-            if(!scanner.hasNextLine()) break; // 테스트 때문에 만들었습니다.(이게 없으면 scanner가 계속 켜져있어서 오류가 나타남)
+            if(!scanner.hasNextLine()) break; // Scanner가 nextLine이 없으면 종료 -> 입력값이 없으면 종료를 해야되기 때문에
 
             String cmd = scanner.nextLine().trim();
             switch(getCommandType(cmd)) {
