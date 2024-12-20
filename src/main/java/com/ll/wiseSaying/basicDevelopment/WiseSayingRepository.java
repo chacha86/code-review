@@ -1,4 +1,4 @@
-package com.ll.wiseSaying;
+package com.ll.wiseSaying.basicDevelopment;
 
 import java.io.*;
 import java.nio.file.Files;

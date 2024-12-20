@@ -1,11 +1,9 @@
-package com.ll.wiseSaying;
+package com.ll.wiseSaying.basicDevelopment;
 
 public class WiseSaying {
-    private int id;
+    private final int id;
     private String author;
     private String content;
-
-    public WiseSaying() { }
 
     public WiseSaying(int id, String author, String content) {
         this.id = id;

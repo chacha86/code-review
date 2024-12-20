@@ -1,4 +1,4 @@
-package com.ll.wiseSaying;
+package com.ll.wiseSaying.basicDevelopment;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ public class WiseSayingControllerTest {
         Scanner scanner = TestUtil.genScanner(input);
 
         // when
-        controller.handleCommandLine("등록", scanner);
+        controller.registerWiseSaying(scanner);
 
         // then
         String output = outContent.toString();
@@ -51,10 +51,10 @@ public class WiseSayingControllerTest {
         // given
         String input = "현재를 사랑하라.\n작자미상\n";
         Scanner scanner = TestUtil.genScanner(input);
-        controller.handleCommandLine("등록", scanner);
+        controller.registerWiseSaying(scanner);
 
         // when
-        controller.handleCommandLine("목록", null);
+        controller.searchWiseSaying("목록");
 
         // then
         String output = outContent.toString();
@@ -69,10 +69,10 @@ public class WiseSayingControllerTest {
         // given
         String input = "현재를 사랑하라.\n작자미상\n";
         Scanner scanner = TestUtil.genScanner(input);
-        controller.handleCommandLine("등록", scanner);
+        controller.registerWiseSaying(scanner);
 
         // when
-        controller.handleCommandLine("삭제?id=1", null);
+        controller.deleteWiseSaying("삭제?id=1");
 
         // then
         String output = outContent.toString();
@@ -86,13 +86,13 @@ public class WiseSayingControllerTest {
         // given
         String input = "현재를 사랑하라.\n작자미상\n";
         Scanner scanner = TestUtil.genScanner(input);
-        controller.handleCommandLine("등록", scanner);
+        controller.registerWiseSaying(scanner);
 
         // when
         String updateInput = "새로운 명언\n새로운 작자\n";
         scanner = TestUtil.genScanner(updateInput);
-        controller.handleCommandLine("수정?id=1", scanner);
-        controller.handleCommandLine("목록", null);
+        controller.updateWiseSaying(scanner, "수정?id=1");
+        controller.searchWiseSaying("목록");
 
         // then
         String output = outContent.toString();
@@ -109,7 +109,7 @@ public class WiseSayingControllerTest {
     @DisplayName("빌드 명령어 테스트")
     void testBuildData() {
         // when
-        controller.handleCommandLine("빌드", null);
+        controller.buildData();
 
         // then
         String output = outContent.toString();
