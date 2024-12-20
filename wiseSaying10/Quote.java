@@ -1,4 +1,5 @@
-import java.util.HashMap;
+package wiseSaying10;
+
 import java.util.Map;
 import org.json.simple.JSONObject;
 

@@ -1,3 +1,5 @@
+package wiseSaying10;
+
 import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,6 +11,7 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
     static StringBuilder sb = new StringBuilder();
 
+    static String dirName = "db/wiseSaying/";
     public static void main(String[] args) {
         System.out.println("== 명언 앱 ==");
         boolean continueFlag = true;
@@ -59,7 +62,7 @@ public class Main {
         System.out.println(n + "번 명언이 등록되었습니다.");
     }
     public static void saveQuoteAsFile(Quote q) {
-        String fileName = String.format("db/wiseSaying/%d.json", q.id);
+        String fileName = String.format("%s%d.json", dirName, q.id);
         saveFile(fileName, q.toJson().toJSONString());
     }
     public static void deleteQuote(int id) {
@@ -98,12 +101,12 @@ public class Main {
     }
 
     public static void saveLastId() {
-        String fileName = "db/wiseSaying/lastId.txt";
+        String fileName = dirName + "lastId.txt";
         saveFile(fileName, String.valueOf(n));
     }
 
     public static void  buildJson() {
-        String fileName = "db/wiseSaying/data.json";
+        String fileName = dirName + "data.json";
             JSONArray jsonList = new JSONArray();
             for (int i : quotes.keySet()) {
                 jsonList.add(quotes.get(i).toJson());
