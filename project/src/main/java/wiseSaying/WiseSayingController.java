@@ -21,113 +21,40 @@ public class WiseSayingController {
 
     private WiseSayingService service = WiseSayingService.getInstance();
 
-    public Long register() {
-        System.out.print("명언 : ");
-        String content = inputReader();
-        System.out.print("작가 : ");
-        String author = inputReader();
-
+    public Long register(String content, String author) {
         Long savedId = service.register(content, author);
-        System.out.println(savedId + "번 명언이 등록되었습니다.");
         return savedId;
     }
 
+    public List<WiseSaying> search(String condition) {
+        String keywordType = null;
+        String keyword = null;
 
-    public void showList() {
-//        Set<WiseSaying> wiseSet = service.findAllWise();
+        Map<String, String> conditionMap = null;
 
-        Set<WiseSaying> wiseSet = service.search(null, null);
+        //조건 ("?" 있는) 목록 조회
+        if (condition.contains("?")) {
+            conditionMap = parseParameters(condition);
+            if (conditionMap.containsKey("keywordType")) {
+                keywordType = conditionMap.get("keywordType");
+                System.out.println("----------------------");
+                System.out.println("검색타입 : " + keywordType);
+            } else {
+                keywordType = null;
+            }
 
-        List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (WiseSaying wiseSaying : wiseSet) {
-            wiseSayings.add(wiseSaying);
-        }
-        wiseSayings.sort((a,b) -> (int) (b.getId() - a.getId()));
-
-        System.out.println("번호  /  작가  /  명언");
-        System.out.println("----------------------");
-
-        int size = pagingSize;
-        if (wiseSayings.size() < pagingSize) {
-            size = wiseSayings.size();
-        }
-
-        for (int i = 0; i < size; i++) {
-            System.out.println(wiseSayings.get(i).getId() + " / " + wiseSayings.get(i).getAuthor() + " / " + wiseSayings.get(i).getContent());
-        }
-    }
-
-    public void search(String condition) {
-        Map<String, String> conditionMap = parseParameters(condition);
-        String keywordType;
-        String keyword;
-        if (conditionMap.containsKey("keywordType")) {
-            keywordType = conditionMap.get("keywordType");
-        } else {
-            keywordType = null;
-        }
-
-        if (conditionMap.containsKey("keyword")) {
-            keyword = conditionMap.get("keyword");
-        } else {
-            keyword = null;
+            if (conditionMap.containsKey("keyword")) {
+                keyword = conditionMap.get("keyword");
+                System.out.println("검색어 : " + keyword);
+                System.out.println("----------------------");
+            } else {
+                keyword = null;
+            }
         }
 
         Set<WiseSaying> searchSet = service.search(keywordType, keyword);
 
-        if (conditionMap.containsKey("page")) {
-            int page = Integer.parseInt(conditionMap.get("page"));
-            List<WiseSaying> wiseSayings = new ArrayList<>();
-            for (WiseSaying wiseSaying : searchSet) {
-                wiseSayings.add(wiseSaying);
-            }
-            wiseSayings.sort((a,b) -> (int) (b.getId() - a.getId()));
-            int itemsPerPage = pagingSize; // 페이지당 명언 수
-            int totalItems = wiseSayings.size(); // 전체 명언 수
-            int totalPages = (totalItems + itemsPerPage - 1) / itemsPerPage; // 전체 페이지 수 계산
-
-            int startIndex = (page - 1) * itemsPerPage; // 현재 페이지의 시작 인덱스
-            if (startIndex >= totalItems || startIndex < 0) {
-                System.out.println("잘못된 페이지 번호입니다.");
-                return; // 유효하지 않은 페이지 번호일 경우 처리 중단
-            }
-
-            int endIndex = Math.min(startIndex + itemsPerPage, totalItems); // 현재 페이지의 끝 인덱스
-            List<WiseSaying> pageItems = wiseSayings.subList(startIndex, endIndex); // 현재 페이지에 해당하는 명언 목록 추출
-
-            System.out.println("번호  /  작가  /  명언");
-            System.out.println("----------------------");
-            for (WiseSaying wise : pageItems) {
-                System.out.println(wise.getId() + " / " + wise.getAuthor() + " / " + wise.getContent());
-            }
-            // 페이지 네비게이션 정보 출력
-            System.out.print("페이지 : ");
-            for (int i = 1; i <= totalPages; i++) {
-                if (i == page) {
-                    System.out.print("[" + i + "] ");
-                } else {
-                    System.out.print(i + " ");
-                }
-            }
-            System.out.println();
-
-
-
-        } else {
-            System.out.println("----------------------");
-            System.out.println("검색타입 : " + keywordType);
-            System.out.println("검색어 : " + keyword);
-            System.out.println("----------------------");
-            System.out.println("번호  /  작가  /  명언");
-            System.out.println("----------------------");
-            for (WiseSaying wise : searchSet) {
-                System.out.println(wise.getId() + " / " + wise.getAuthor() + " / " + wise.getContent());
-            }
-        }
-
-
-
-
+        return paging(conditionMap, searchSet, keywordType, keyword);
     }
 
     public void remove(String command) {
@@ -217,5 +144,59 @@ public class WiseSayingController {
             }
         }
         return params;
+    }
+
+    private List<WiseSaying> setToListWithDesc(Set<WiseSaying> wiseSet) {
+        List<WiseSaying> wiseSayings = new ArrayList<>();
+        for (WiseSaying wiseSaying : wiseSet) {
+            wiseSayings.add(wiseSaying);
+        }
+        wiseSayings.sort((a,b) -> (int) (b.getId() - a.getId()));
+        return wiseSayings;
+    }
+
+    private List<WiseSaying> paging(Map<String, String> conditionMap, Set<WiseSaying> searchSet, String keywordType, String keyword) {
+        List<WiseSaying> wiseSayings = setToListWithDesc(searchSet);
+        int page = 1;
+
+        if (conditionMap != null && conditionMap.containsKey("page")) {
+            page = Integer.parseInt(conditionMap.get("page"));
+        }
+
+        int totalItems = wiseSayings.size(); // 전체 명언 수
+        int totalPages = (totalItems + pagingSize - 1) / pagingSize; // 전체 페이지 수 계산
+
+        int startIndex = (page - 1) * pagingSize; // 현재 페이지의 시작 인덱스
+
+        if (startIndex > totalItems || startIndex < 0) {
+            System.out.println("잘못된 페이지 번호입니다.");
+            return null;
+        }
+
+        int endIndex = Math.min(startIndex + pagingSize, totalItems); // 현재 페이지의 끝 인덱스
+
+        List<WiseSaying> pageItems = wiseSayings.subList(startIndex, endIndex); // 현재 페이지에 해당하는 명언 목록 추출
+
+        print(pageItems, totalPages, page); // 출력
+
+        return pageItems;
+    }
+
+    private void print(List<WiseSaying> pageItems, int totalPages, int page) {
+        System.out.println("번호  /  작가  /  명언");
+        System.out.println("----------------------");
+        for (WiseSaying wise : pageItems) {
+            System.out.println(wise.getId() + " / " + wise.getAuthor() + " / " + wise.getContent());
+        }
+        // 페이지 네비게이션 정보 출력
+        System.out.print("페이지 : ");
+        for (int i = 1; i <= totalPages; i++) {
+            if (i == page) {
+                System.out.print("[" + i + "] ");
+            } else {
+                System.out.print(i + " ");
+            }
+        }
+        System.out.println();
     }
 }

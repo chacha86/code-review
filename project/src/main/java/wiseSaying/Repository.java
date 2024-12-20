@@ -1,11 +1,12 @@
 package wiseSaying;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface Repository {
     Long add(WiseSaying wise);
 
-    WiseSaying findById(Long id);
+    Optional<WiseSaying> findById(Long id);
 
     Set<WiseSaying> findByContent(String content);
 

@@ -2,13 +2,11 @@ package wiseSaying;
 
 
 import org.json.JSONArray;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
-
 import org.json.JSONObject;
 
 public class WiseSayingSaveFile {
