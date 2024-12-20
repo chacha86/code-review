@@ -87,7 +87,7 @@ public class WiseSayingRepository {
 
     public List<WiseSaying> findMany() {
         List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (File file : findAllFiles()) {
+        for (File file : findFilesDescendingId()) {
             try {
                 String json = Files.readString(file.toPath());
                 wiseSayings.add(WiseSaying.fromJson(json));
@@ -101,7 +101,7 @@ public class WiseSayingRepository {
 
     public List<WiseSaying> findWhere(String key, String keyword) {
         List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (File file : findAllFiles()) {
+        for (File file : findFilesDescendingId()) {
             try {
                 String json = Files.readString(file.toPath());
                 WiseSaying wiseSaying = WiseSaying.fromJson(json);
@@ -147,9 +147,14 @@ public class WiseSayingRepository {
         }
     }
 
-    private List<File> findAllFiles() {
+    private List<File> findFilesDescendingId() {
         return Arrays.stream(Objects.requireNonNull(dbPath.toFile().listFiles()))
                 .filter((file) -> file.getName().endsWith(".json") && !file.getName().equals("data.json"))
+                .sorted((file1, file2) -> {
+                    int id1 = Integer.parseInt(file1.getName().replace(".json", ""));
+                    int id2 = Integer.parseInt(file2.getName().replace(".json", ""));
+                    return Integer.compare(id2, id1);
+                })
                 .toList();
     }
 }
