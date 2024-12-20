@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Scanner;
 
 public class WiseSayingController {
@@ -77,5 +78,43 @@ public class WiseSayingController {
     public void build() {
         service.build();
         System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+    }
+
+    public void queryList(String command) {
+        try {
+            String[] queries = command.substring(3).split("&");
+            String keyword = null;
+            String keywordType = null;
+            for (String query : queries) {
+                String key = query.split("=")[0];
+                String value = query.split("=")[1];
+                if (key.equals("keyword")) {
+                    keyword = value;
+                } else if (key.equals("keywordType")) {
+                    keywordType = value;
+                }
+            }
+            if (Objects.isNull(keywordType) && Objects.isNull(keyword)) {
+                throw new Exception("파라미터가 누락되었습니다.");
+            } else if (Objects.isNull(keywordType) || Objects.isNull(keyword)) {
+                System.out.println("검색 명령 형식이 잘못되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
+            } else if (!keywordType.equals("content") && !keywordType.equals("author")) {
+                System.out.println("keywordType은 content 또는 author 입니다. 예시: 목록?keywordType=content&keyword=검색어");
+            } else {
+                System.out.println("----------------------");
+                System.out.println("검색타입 : " + keywordType);
+                System.out.println("검색어 : " + keyword);
+                System.out.println("----------------------");
+                System.out.println("번호 / 작가 / 명언");
+                System.out.println("----------------------");
+                if (keywordType.equals("content")) {
+                    service.searchWithContent(keyword).forEach(System.out::println);
+                } else {
+                    service.searchWithAuthor(keyword).forEach(System.out::println);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("파라미터가 누락되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
+        }
     }
 }

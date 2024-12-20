@@ -21,6 +21,8 @@ public class App {
                 controller.register();
             } else if (command.equals("목록")) {
                 controller.getList();
+            } else if (command.startsWith("목록?")) {
+                controller.queryList(command);
             } else if (command.startsWith("삭제")) {
                 controller.delete(command);
             } else if (command.startsWith("수정")) {

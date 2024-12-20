@@ -46,6 +46,13 @@ public class WiseSayingService {
         jsonBuilder.append("]");
 
         repository.saveData(jsonBuilder.toString());
+    }
 
+    public List<WiseSaying> searchWithContent(String keyword) {
+        return repository.findWhere("content", keyword);
+    }
+
+    public List<WiseSaying> searchWithAuthor(String keyword) {
+        return repository.findWhere("author", keyword);
     }
 }

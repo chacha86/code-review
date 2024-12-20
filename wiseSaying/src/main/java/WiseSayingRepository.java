@@ -86,15 +86,30 @@ public class WiseSayingRepository {
     }
 
     public List<WiseSaying> findMany() {
-        List<File> files = Arrays.stream(Objects.requireNonNull(dbPath.toFile().listFiles()))
-                .filter((file) -> file.getName().endsWith(".json") && !file.getName().equals("data.json"))
-                .toList();
-
         List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (File file : files) {
+        for (File file : findAllFiles()) {
             try {
                 String json = Files.readString(file.toPath());
                 wiseSayings.add(WiseSaying.fromJson(json));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read file: " + e.getMessage());
+            }
+
+        }
+        return wiseSayings;
+    }
+
+    public List<WiseSaying> findWhere(String key, String keyword) {
+        List<WiseSaying> wiseSayings = new ArrayList<>();
+        for (File file : findAllFiles()) {
+            try {
+                String json = Files.readString(file.toPath());
+                WiseSaying wiseSaying = WiseSaying.fromJson(json);
+                boolean containKeyword = (key.equals("content") && wiseSaying.getContent().contains(keyword)) ||
+                        (key.equals("author") && wiseSaying.getAuthor().contains(keyword));
+                if (containKeyword) {
+                   wiseSayings.add(wiseSaying);
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read file: " + e.getMessage());
             }
@@ -130,5 +145,11 @@ public class WiseSayingRepository {
         } catch (IOException e) {
             throw new RuntimeException("Failed to build data.json: " + e.getMessage());
         }
+    }
+
+    private List<File> findAllFiles() {
+        return Arrays.stream(Objects.requireNonNull(dbPath.toFile().listFiles()))
+                .filter((file) -> file.getName().endsWith(".json") && !file.getName().equals("data.json"))
+                .toList();
     }
 }
