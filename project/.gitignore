@@ -4,7 +4,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### local db files ###
+db/**
+
 ### IntelliJ IDEA ###
+.idea/**
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
