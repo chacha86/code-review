@@ -15,18 +15,12 @@ public class WiseSayingController {
 
     private final WiseSayingService wiseSayingService = WiseSayingService.getInstance();
 
-    private enum command {
-        REGISTER("등록"), SEARCH("목록"), DELETE("삭제"), MODIFY("수정"), BUILD("빌드");
-
-        final String cmd;
-
-        command(String cmd) {
-            this.cmd = cmd;
-        }
-    }
-
     private enum searchKeyword {
-        KEYWORD_TYPE("keywordType="), KEYWORD("keyword="), PAGE("page="), AND("&"), QUESTION_MARK("?"), ID("id=");
+        KEYWORD_TYPE("keywordType="),
+        KEYWORD("keyword="),
+        PAGE("page="),
+        AND("&"),
+        ID("id=");
 
         final String word;
 
@@ -35,22 +29,7 @@ public class WiseSayingController {
         }
     }
 
-    public void handleCommandLine(String cmd, Scanner scanner) {
-
-        if (cmd.equals(command.REGISTER.cmd)) {
-            registerWiseSaying(scanner);
-        } else if (cmd.startsWith(command.SEARCH.cmd)) {
-            searchWiseSaying(cmd);
-        } else if (cmd.startsWith(command.DELETE.cmd)) {
-            deleteWiseSaying(cmd);
-        } else if (cmd.startsWith(command.MODIFY.cmd)) {
-            updateWiseSaying(scanner, cmd);
-        } else if (cmd.equals(command.BUILD.cmd)) {
-            buildData();
-        }
-    }
-
-    private void registerWiseSaying(Scanner scanner) {
+    public void registerWiseSaying(Scanner scanner) {
         System.out.print("명언 : ");
         String content = scanner.nextLine();
         System.out.print("작가 : ");
@@ -60,7 +39,7 @@ public class WiseSayingController {
         System.out.println(wiseSaying.getId() + "번 명언이 등록되었습니다.");
     }
 
-    private void searchWiseSaying(String cmd) {
+    public void searchWiseSaying(String cmd) {
         List<WiseSaying> wiseSayingList = new ArrayList<>();
 
         if (cmd.contains(searchKeyword.KEYWORD.word) && cmd.contains(searchKeyword.KEYWORD_TYPE.word)) {
@@ -84,7 +63,7 @@ public class WiseSayingController {
         printPagedList(cmd, wiseSayingList);
     }
 
-    private void printPagedList(String cmd, List<WiseSaying> wiseSayingList) {
+    public void printPagedList(String cmd, List<WiseSaying> wiseSayingList) {
         int pageSize = 5;
         int page = cmd.contains(searchKeyword.PAGE.word)
                 ? Integer.parseInt(cmd.split(searchKeyword.PAGE.word)[1].split(searchKeyword.AND.word)[0]) : 1;
@@ -113,7 +92,7 @@ public class WiseSayingController {
         System.out.println();
     }
 
-    private void deleteWiseSaying(String cmd) {
+    public void deleteWiseSaying(String cmd) {
         int id = Integer.parseInt(cmd.split(searchKeyword.ID.word)[1]);
         if (wiseSayingService.deleteById(id)) {
             System.out.println(id + "번 명언이 삭제되었습니다.");
@@ -122,7 +101,7 @@ public class WiseSayingController {
         }
     }
 
-    private void updateWiseSaying(Scanner scanner, String cmd) {
+    public void updateWiseSaying(Scanner scanner, String cmd) {
         int id = Integer.parseInt(cmd.split(searchKeyword.ID.word)[1]);
         WiseSaying wiseSaying = wiseSayingService.findById(id);
 
@@ -141,7 +120,7 @@ public class WiseSayingController {
         wiseSayingService.update(id, newContent, newAuthor);
     }
 
-    private void buildData() {
+    public void buildData() {
         wiseSayingService.saveAll();
         System.out.println("data.json 파일의 내용이 갱신되었습니다.");
     }
