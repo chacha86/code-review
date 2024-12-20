@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -99,22 +100,35 @@ public class WiseSayingRepository {
     public List<WiseSaying> findWiseSayings(Search search) {
         List<WiseSaying> wiseSayings = null;
 
-        if(search.keywordType().equals(ENG_CONTENT)) {
+        if(search.keywordType() == null && search.keyword() == null) {
+            wiseSayings = new ArrayList<>(db.values());
+
+            return getSubWiseSayings(wiseSayings, search.page());
+        }
+
+        if (search.keywordType().equals(ENG_CONTENT)) {
             wiseSayings = db.values().stream()
                 .filter(wiseSaying -> wiseSaying.getContent().contains(search.keyword()))
                 .collect(toList());
         }
 
-        if(search.keywordType().equals(ENG_AUTHOR)) {
+        if (search.keywordType().equals(ENG_AUTHOR)) {
             wiseSayings = db.values().stream()
                 .filter(wiseSaying -> wiseSaying.getAuthor().contains(search.keyword()))
                 .collect(toList());
         }
 
-        if(wiseSayings.isEmpty()){
+        if (wiseSayings == null || wiseSayings.isEmpty()) {
             throw new InputException(NOT_EXIST);
         }
 
-        return wiseSayings;
+        return getSubWiseSayings(wiseSayings, search.page());
+    }
+
+    public List<WiseSaying> getSubWiseSayings(List<WiseSaying> wiseSayings, long page) {
+        int start = (int) ((page - 1) * PAGE_SIZE);
+        int end = Math.min(start + PAGE_SIZE - 1, db.size() - 1);
+
+        return new ArrayList<>(wiseSayings).subList(start, end + 1);
     }
 }

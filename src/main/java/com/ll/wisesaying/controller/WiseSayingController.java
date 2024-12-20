@@ -5,6 +5,7 @@ import static com.ll.wisesaying.util.InputUtil.*;
 import static com.ll.wisesaying.util.OutputUtil.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.ll.wisesaying.domain.Search;
 import com.ll.wisesaying.domain.WiseSaying;
@@ -68,6 +69,8 @@ public class WiseSayingController {
         printlnMessage(TABLE_SEPARATOR);
 
         printWiseSayings(wiseSayingService.getWiseSayings());
+
+        printPage(1L);
     }
 
     public void delete(String cmd) throws IOException {
@@ -103,17 +106,15 @@ public class WiseSayingController {
     public void search(String cmd) {
         Search search = getSearch(cmd);
 
-        printlnMessage(TABLE_SEPARATOR);
-        printMessage(KEYWORD_TYPE);
-        printlnMessage(search.keywordType());
+        printListHeader(search);
 
-        printMessage(KEYWORD);
-        printlnMessage(search.keyword());
-        printlnMessage(TABLE_SEPARATOR);
+        List<WiseSaying> wiseSayings = wiseSayingService.getWiseSayings(search);
 
         printlnMessage(FORM);
         printlnMessage(TABLE_SEPARATOR);
 
-        printWiseSayings(wiseSayingService.getWiseSayings(cmd));
+        printWiseSayings(wiseSayings);
+
+        printPage(search.page());
     }
 }

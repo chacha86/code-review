@@ -30,12 +30,11 @@ public class WiseSayingService {
     }
 
     public List<WiseSaying> getWiseSayings() {
-        return new ArrayList<>(wiseSayingRepository.getDB().values());
+        return wiseSayingRepository.getSubWiseSayings(new ArrayList<>(wiseSayingRepository.getDB().values()), 1L);
     }
 
-    public List<WiseSaying> getWiseSayings(String cmd) {
-        Search keyword = getSearch(cmd);
-        return wiseSayingRepository.findWiseSayings(keyword);
+    public List<WiseSaying> getWiseSayings(Search search) {
+        return wiseSayingRepository.findWiseSayings(search);
     }
 
     public Integer deleteWiseSaying(String cmd) {
