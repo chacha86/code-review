@@ -1,6 +1,7 @@
-package TDD.main;
+package TDD.main.service;
 
 import TDD.Proverb;
+import TDD.main.repository.ProverbRepository;
 
 import java.util.ArrayList;
 import java.util.List;
