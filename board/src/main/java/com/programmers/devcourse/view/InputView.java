@@ -1,6 +1,6 @@
-package com.programmers.devcourse.lecture4.view;
+package com.programmers.devcourse.view;
 
-import com.programmers.devcourse.lecture4.model.Saying;
+import com.programmers.devcourse.model.Saying;
 
 import java.io.BufferedReader;
 import java.io.IOException;
