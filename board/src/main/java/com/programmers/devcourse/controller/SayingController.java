@@ -34,8 +34,11 @@ public class SayingController {
                 outputView.printSayingInfo(board);
             } else if (commandType.equals(REMOVE)) {
                 String id = command.substring(6);
-                board.remove(Long.parseLong(id));
-                outputView.printRemove(id);
+                if(board.remove(Long.parseLong(id))){
+                    outputView.printRemove(id);
+                }else{
+                    outputView.printNotExistSayingNumber(id);
+                }
             } else {
                 break;
             }

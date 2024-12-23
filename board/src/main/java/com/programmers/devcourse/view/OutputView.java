@@ -29,4 +29,8 @@ public class OutputView {
     public void printRemove(String id) {
         System.out.println(id + "번 명언이 삭제되었습니다.");
     }
+
+    public void printNotExistSayingNumber(String id) {
+        System.out.println(id + "번 명언은 존재하지 않습니다.");
+    }
 }

@@ -40,10 +40,11 @@ public class Board {
         return element.size();
     }
 
-    public void remove(Long id) {
+    public boolean remove(Long id) {
         if(!element.containsKey(id)){
-            throw new IllegalArgumentException("없는번호입니다.");
+            return false;
         }
         element.remove(id);
+        return true;
     }
 }
