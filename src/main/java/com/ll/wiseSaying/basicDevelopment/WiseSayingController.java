@@ -63,7 +63,7 @@ public class WiseSayingController {
         printPagedList(cmd, wiseSayingList);
     }
 
-    public void printPagedList(String cmd, List<WiseSaying> wiseSayingList) {
+    private void printPagedList(String cmd, List<WiseSaying> wiseSayingList) {
         int pageSize = 5;
         int page = cmd.contains(searchKeyword.PAGE.word)
                 ? Integer.parseInt(cmd.split(searchKeyword.PAGE.word)[1].split(searchKeyword.AND.word)[0]) : 1;

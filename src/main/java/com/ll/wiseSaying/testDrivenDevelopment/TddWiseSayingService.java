@@ -7,4 +7,10 @@ public class TddWiseSayingService {
     public static synchronized TddWiseSayingService getInstance() {
         return instance;
     }
+
+    private final TddWiseSayingRepository repository = TddWiseSayingRepository.getInstance();
+
+    public int registerWiseSaying(String author, String content) {
+        return repository.registerWiseSaying(author, content);
+    }
 }

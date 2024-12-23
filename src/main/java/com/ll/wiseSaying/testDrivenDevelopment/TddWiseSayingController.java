@@ -13,7 +13,16 @@ public class TddWiseSayingController {
         return instance;
     }
 
+    private final TddWiseSayingService service = TddWiseSayingService.getInstance();
+
     public void register(Scanner scanner) {
+        System.out.print("명언 : ");
+        String content = scanner.nextLine();
+        System.out.print("작가 : ");
+        String author = scanner.nextLine();
+
+        int id = service.registerWiseSaying(author, content);
+        System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
     public void search(Scanner scanner, String command) {
