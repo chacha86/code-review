@@ -42,4 +42,8 @@ public class OutputView {
         System.out.println("작가(기존) : " + author);
 
     }
+
+    public void printBuildSuccess() {
+        System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+    }
 }

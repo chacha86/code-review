@@ -26,8 +26,7 @@ public class SayingController {
         outputView.printInit();
         Map<Long, Saying> savedSayingMap = JsonDBInputView.readSaying();
         Long lastId = JsonDBInputView.readLastId();
-        Board board = new Board(savedSayingMap,lastId);
-
+        Board board = new Board(savedSayingMap, lastId);
         while (true) {
             String command = inputView.command();
             CommandType commandType = board.defineCommand(command);
@@ -35,7 +34,6 @@ public class SayingController {
                 Saying saying = inputView.inputSaying();
                 long boardNumber = board.add(saying);
                 outputView.printRegisterNumber(boardNumber);
-                JsonDBOutputView.saveSaying(boardNumber, saying);
             } else if (commandType.equals(LIST)) {
                 outputView.printOptions();
                 outputView.printSayingInfo(board);
@@ -63,6 +61,9 @@ public class SayingController {
 
                 Saying modifySaying = element.modify(newAuthor, newContent);
                 board.modify(Long.parseLong(id), modifySaying);
+            } else if (commandType.equals(BUILD)) {
+                JsonDBOutputView.saveSaying(board);
+                outputView.printBuildSuccess();
             } else {
                 JsonDBOutputView.lastSayingNumber(board.getLastBoarNumber());
                 break;

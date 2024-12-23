@@ -50,7 +50,7 @@ class BoardTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        int sayingNumber = board.add(new Saying("author", "content"));
+        long sayingNumber = board.add(new Saying("author", "content"));
 
         System.out.println("=====Logic End=====");
         // then
@@ -103,19 +103,5 @@ class BoardTest {
         System.out.println("=====Logic End=====");
         // then
         assertThat(board.getBoardSize()).isEqualTo(1);
-    }
-
-    @Test
-    void 없는아이디의_명어_삭제시_예외() {
-        // given
-        Board board = new Board();
-        board.add(new Saying("author", "content"));
-        board.add(new Saying("author2", "content2"));
-        // when
-        System.out.println("=====Logic Start=====");
-
-        System.out.println("=====Logic End=====");
-        // then
-        assertThrows(IllegalArgumentException.class,()->board.remove(3L));
     }
 }

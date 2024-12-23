@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,13 +31,13 @@ public class JsonDBInputView {
                 ObjectMapper objectMapper = new ObjectMapper();
 
                 // JSON 파일을 Map<String, Object> 형태로 읽기
-                Map<String, Object> rawMap = objectMapper.readValue(file, Map.class);
+                List<Map<String, Object>> rawMap = objectMapper.readValue(file, List.class);
 
                 // 파일에서 "id", "author", "content" 필드 읽기
-                if (rawMap.containsKey("id") && rawMap.containsKey("author") && rawMap.containsKey("content")) {
-                    String id = rawMap.get("id").toString(); // id는 문자열로 읽히므로 Long으로 변환
-                    String author = (String) rawMap.get("author");
-                    String content = (String) rawMap.get("content");
+                for (Map<String, Object> stringObjectMap : rawMap) {
+                    String id = stringObjectMap.get("id").toString(); // id는 문자열로 읽히므로 Long으로 변환
+                    String author = (String) stringObjectMap.get("author");
+                    String content = (String) stringObjectMap.get("content");
 
                     // Saying 객체 생성
                     Saying saying = new Saying(author, content);
