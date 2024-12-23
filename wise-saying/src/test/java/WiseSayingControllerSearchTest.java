@@ -56,14 +56,6 @@ public class WiseSayingControllerSearchTest {
     @DisplayName("목록에서 검색 시 keywordType과 keyword 모두 필요하다.")
     void 검색조건() {
 
-        String out = AppTest.run("""
-                목록?test=테스트
-                """);
-
-        assertThat(out)
-                .contains("파라미터가 누락되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
-
-
         String out2 = AppTest.run("""
                 목록?keyword=content
                 """);

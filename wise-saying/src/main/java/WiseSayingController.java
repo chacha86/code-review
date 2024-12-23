@@ -21,10 +21,10 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    public void getList() {
+    public void getList(int page) {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
-        service.getAll().forEach(System.out::println);
+        service.getAll(page);
     }
 
     public void delete(String command) {
@@ -85,6 +85,7 @@ public class WiseSayingController {
             String[] queries = command.substring(3).split("&");
             String keyword = null;
             String keywordType = null;
+            int page = 1;
             for (String query : queries) {
                 String key = query.split("=")[0];
                 String value = query.split("=")[1];
@@ -92,10 +93,12 @@ public class WiseSayingController {
                     keyword = value;
                 } else if (key.equals("keywordType")) {
                     keywordType = value;
+                } else if (key.equals("page")) {
+                    page = Integer.parseInt(value);
                 }
             }
             if (Objects.isNull(keywordType) && Objects.isNull(keyword)) {
-                throw new Exception("파라미터가 누락되었습니다.");
+              getList(page);
             } else if (Objects.isNull(keywordType) || Objects.isNull(keyword)) {
                 System.out.println("검색 명령 형식이 잘못되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
             } else if (!keywordType.equals("content") && !keywordType.equals("author")) {
@@ -108,9 +111,9 @@ public class WiseSayingController {
                 System.out.println("번호 / 작가 / 명언");
                 System.out.println("----------------------");
                 if (keywordType.equals("content")) {
-                    service.searchWithContent(keyword).forEach(System.out::println);
+                    service.searchWithContent(keyword, page);
                 } else {
-                    service.searchWithAuthor(keyword).forEach(System.out::println);
+                    service.searchWithAuthor(keyword, page);
                 }
             }
         } catch (Exception e) {

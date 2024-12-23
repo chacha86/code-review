@@ -20,7 +20,7 @@ public class App {
             } else if (command.equals("등록")) {
                 controller.register();
             } else if (command.equals("목록")) {
-                controller.getList();
+                controller.getList(1);
             } else if (command.startsWith("목록?")) {
                 controller.queryList(command);
             } else if (command.startsWith("삭제")) {
