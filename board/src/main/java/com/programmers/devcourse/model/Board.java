@@ -1,13 +1,18 @@
 package com.programmers.devcourse.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Board {
-    private final List<Saying> element;
+    private final Map<Long, Saying> element;
+    private Long idx = 1L;
 
     public Board() {
-        this.element = new ArrayList<Saying>();
+        this.element = new TreeMap<>(new Comparator<Long>() {
+            @Override
+            public int compare(Long o1, Long o2) {
+                return o2.compareTo(o1);
+            }
+        });
     }
 
 
@@ -16,27 +21,29 @@ public class Board {
             return CommandType.REGISTER;
         } else if (command.equals("목록")) {
             return CommandType.LIST;
+        } else if (command.startsWith("삭제")) {
+            return CommandType.REMOVE;
         }
         return CommandType.EXIT;
     }
 
     public int add(Saying saying) {
-        element.add(saying);
+        element.putIfAbsent(idx++, saying);
         return element.size();
     }
 
-    public List<Saying>getElement(){
+    public Map<Long,Saying> getElement() {
         return this.element;
     }
 
-    public int getBoardSize(){
+    public int getBoardSize() {
         return element.size();
     }
 
-    public Saying getElement(int index){
-        if(getBoardSize()-1<index){
-            throw new IllegalArgumentException("인덱스범위를 넘었습니다.");
+    public void remove(Long id) {
+        if(!element.containsKey(id)){
+            throw new IllegalArgumentException("없는번호입니다.");
         }
-        return element.get(index);
+        element.remove(id);
     }
 }

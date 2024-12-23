@@ -8,8 +8,7 @@ import com.programmers.devcourse.view.OutputView;
 
 import java.io.IOException;
 
-import static com.programmers.devcourse.model.CommandType.LIST;
-import static com.programmers.devcourse.model.CommandType.REGISTER;
+import static com.programmers.devcourse.model.CommandType.*;
 
 public class SayingController {
     private final InputView inputView;
@@ -32,10 +31,11 @@ public class SayingController {
                 outputView.printRegisterNumber(boardNumber);
             } else if (commandType.equals(LIST)) {
                 outputView.printOptions();
-                for(int sayingNumber= board.getBoardSize();sayingNumber > 0; sayingNumber--) {
-                    int sayingIdx = sayingNumber - 1;
-                    outputView.printSayingInfo(board.getElement(sayingIdx),sayingNumber);
-                }
+                outputView.printSayingInfo(board);
+            } else if (commandType.equals(REMOVE)) {
+                String id = command.substring(6);
+                board.remove(Long.parseLong(id));
+                outputView.printRemove(id);
             } else {
                 break;
             }

@@ -3,6 +3,8 @@ package com.programmers.devcourse.view;
 import com.programmers.devcourse.model.Board;
 import com.programmers.devcourse.model.Saying;
 
+import java.util.Map;
+
 public class OutputView {
     public void printInit() {
         System.out.println("== 명언 앱 ==");
@@ -17,7 +19,14 @@ public class OutputView {
         System.out.println("----------------------");
     }
 
-    public void printSayingInfo(Saying saying, int sayingNumber) {
-        System.out.println(sayingNumber+" "+"/"+" "+saying.getAuthor()+" "+"/"+" "+saying.getContents());
+    public void printSayingInfo(Board board) {
+        Map<Long, Saying> element = board.getElement();
+        for (Map.Entry<Long, Saying> entry : element.entrySet()) {
+            System.out.println(entry.getKey() + " " + "/" + " " + entry.getValue().getAuthor() + " " + "/" + " " + entry.getValue().getContents());
+        }
+    }
+
+    public void printRemove(String id) {
+        System.out.println(id + "번 명언이 삭제되었습니다.");
     }
 }

@@ -91,38 +91,32 @@ class BoardTest {
     }
 
     @Test
-    void 특정인덱스번호의_속담조회() {
+    void 삭제하기() {
         // given
         Board board = new Board();
-        Saying saying1 = new Saying("a1", "c1");
-        Saying saying2 = new Saying("a2", "c2");
-        int sayingNumber1 = board.add(saying1);
-        int sayingNumber2 = board.add(saying2);
+        board.add(new Saying("author", "content"));
+        board.add(new Saying("author2", "content2"));
         // when
         System.out.println("=====Logic Start=====");
 
+        board.remove(1L);
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(
-                () -> assertThat(board.getElement(sayingNumber2 - 1)).isEqualTo(saying2),
-                ()->assertThat(board.getElement(sayingNumber1 - 1)).isEqualTo(saying1));
+        assertThat(board.getBoardSize()).isEqualTo(1);
     }
 
     @Test
-    void 속돔조회시_인덱스범위를_넘었을때() {
+    void 없는아이디의_명어_삭제시_예외() {
         // given
         Board board = new Board();
-        Saying saying1 = new Saying("a1", "c1");
-        Saying saying2 = new Saying("a2", "c2");
-        final int OVER_IDX = 2;
+        board.add(new Saying("author", "content"));
+        board.add(new Saying("author2", "content2"));
         // when
         System.out.println("=====Logic Start=====");
 
-
         System.out.println("=====Logic End=====");
         // then
-
-        assertThrows(IllegalArgumentException.class,()-> assertThat(board.getElement(OVER_IDX)));
+        assertThrows(IllegalArgumentException.class,()->board.remove(3L));
     }
 }
