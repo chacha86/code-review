@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.List;
 
 public class WiseSayingService {
@@ -29,7 +30,8 @@ public class WiseSayingService {
     }
 
     public void build() {
-        List<WiseSaying> wiseSayings = repository.findMany();
+        List<WiseSaying> wiseSayings = repository.findMany()
+                .stream().sorted(Comparator.comparingInt(WiseSaying::getId)).toList();
         StringBuilder jsonBuilder = new StringBuilder("[\n");
         for (int i = 0; i < wiseSayings.size(); i++) {
             WiseSaying wiseSaying = wiseSayings.get(i);
