@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static com.programmers.devcourse.model.CommandType.*;
 import static com.programmers.devcourse.model.CommandType.LIST;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +17,7 @@ class BoardTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        assertThat(board.getElement()).isNotNull();
+        assertThat(board.getElementsMap()).isNotNull();
 
         System.out.println("=====Logic End=====");
         // then
@@ -55,7 +54,7 @@ class BoardTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(board.getElement().size()).isEqualTo(1),
+        assertAll(() -> assertThat(board.getElementsMap().size()).isEqualTo(1),
                 () -> assertThat(sayingNumber).isEqualTo(1));
 
     }
@@ -70,7 +69,7 @@ class BoardTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertThat(board.getElement()).isNotNull();
+        assertThat(board.getElementsMap()).isNotNull();
 
     }
 

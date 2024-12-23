@@ -23,6 +23,8 @@ public class Board {
             return CommandType.LIST;
         } else if (command.startsWith("삭제")) {
             return CommandType.REMOVE;
+        } else if (command.startsWith("수정")) {
+            return CommandType.MODIFY;
         }
         return CommandType.EXIT;
     }
@@ -32,19 +34,31 @@ public class Board {
         return element.size();
     }
 
-    public Map<Long,Saying> getElement() {
+    public Map<Long, Saying> getElementsMap() {
         return this.element;
+    }
+
+    public Saying getElement(Long id) {
+        return this.element.get(id);
     }
 
     public int getBoardSize() {
         return element.size();
     }
 
-    public boolean remove(Long id) {
-        if(!element.containsKey(id)){
+    public void remove(Long id) {
+        element.remove(id);
+    }
+
+    public boolean isExist(Long id) {
+        if (!element.containsKey(id)) {
             return false;
         }
-        element.remove(id);
         return true;
+    }
+
+
+    public void modify(Long id, Saying saying) {
+        element.put(id, saying);
     }
 }

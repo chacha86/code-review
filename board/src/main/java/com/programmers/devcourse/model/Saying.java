@@ -2,8 +2,8 @@ package com.programmers.devcourse.model;
 
 
 public class Saying {
-    private final String author;
-    private final String contents;
+    private String author;
+    private String contents;
     public String getAuthor() {
         return author;
     }
@@ -15,5 +15,11 @@ public class Saying {
     public Saying(String author, String contents) {
         this.author = author;
         this.contents = contents;
+    }
+
+    public Saying modify(String newAuthor,String newContents){
+        this.author = newAuthor;
+        this.contents = newContents;
+        return this;
     }
 }

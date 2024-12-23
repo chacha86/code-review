@@ -20,7 +20,7 @@ public class OutputView {
     }
 
     public void printSayingInfo(Board board) {
-        Map<Long, Saying> element = board.getElement();
+        Map<Long, Saying> element = board.getElementsMap();
         for (Map.Entry<Long, Saying> entry : element.entrySet()) {
             System.out.println(entry.getKey() + " " + "/" + " " + entry.getValue().getAuthor() + " " + "/" + " " + entry.getValue().getContents());
         }
@@ -32,5 +32,14 @@ public class OutputView {
 
     public void printNotExistSayingNumber(String id) {
         System.out.println(id + "번 명언은 존재하지 않습니다.");
+    }
+
+    public void printOriginalSayingContent(String contents) {
+        System.out.println("명언(기존) : " + contents);
+    }
+
+    public void printOriginalSayingAuthor(String author) {
+        System.out.println("작가(기존) : " + author);
+
     }
 }

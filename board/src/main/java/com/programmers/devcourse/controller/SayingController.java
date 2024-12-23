@@ -34,11 +34,28 @@ public class SayingController {
                 outputView.printSayingInfo(board);
             } else if (commandType.equals(REMOVE)) {
                 String id = command.substring(6);
-                if(board.remove(Long.parseLong(id))){
-                    outputView.printRemove(id);
-                }else{
+                if (!board.isExist(Long.valueOf(id))) {
                     outputView.printNotExistSayingNumber(id);
+                    continue;
                 }
+                board.remove(Long.parseLong(id));
+                outputView.printRemove(id);
+
+            } else if (commandType.equals(MODIFY)) {
+                String id = command.substring(6);
+                if (!board.isExist(Long.valueOf(id))) {
+                    outputView.printNotExistSayingNumber(id);
+                    continue;
+                }
+                Saying element = board.getElement(Long.parseLong(id));
+
+                outputView.printOriginalSayingContent(element.getContents());
+                String newContent = inputView.inputNewContent();
+                outputView.printOriginalSayingAuthor(element.getAuthor());
+                String newAuthor = inputView.inputNewAuthor();
+
+                Saying modifySaying = element.modify(newAuthor, newContent);
+                board.modify(Long.parseLong(id), modifySaying);
             } else {
                 break;
             }
