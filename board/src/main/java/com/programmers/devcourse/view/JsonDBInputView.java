@@ -56,7 +56,7 @@ public class JsonDBInputView {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine(); // 파일에서 첫 번째 줄 읽기
             if (line != null) {
-                return Long.parseLong(line.trim()); // 읽은 값을 Long으로 변환
+                return Long.parseLong(line.trim())+1; // 읽은 값을 Long으로 변환
             } else {
                 throw new IOException("File is empty: " + directoryPath);
             }

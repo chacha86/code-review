@@ -17,23 +17,7 @@ public class Board {
 
     public Board(Map<Long,Saying>savedElements,Long lastIdx){
         this.element = savedElements;
-        this.idx = lastIdx+1;
-    }
-
-
-    public CommandType defineCommand(String command) {
-        if (command.equals("등록")) {
-            return CommandType.REGISTER;
-        } else if (command.equals("목록")) {
-            return CommandType.LIST;
-        } else if (command.startsWith("삭제")) {
-            return CommandType.REMOVE;
-        } else if (command.startsWith("수정")) {
-            return CommandType.MODIFY;
-        }else if(command.equals("빌드")){
-            return CommandType.BUILD;
-        }
-        return CommandType.EXIT;
+        this.idx = lastIdx;
     }
 
     public long add(Saying saying) {
