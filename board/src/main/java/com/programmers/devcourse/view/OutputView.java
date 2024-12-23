@@ -10,7 +10,7 @@ public class OutputView {
         System.out.println("== 명언 앱 ==");
     }
 
-    public void printRegisterNumber(int registerNumber) {
+    public void printRegisterNumber(long registerNumber) {
         System.out.println(registerNumber + "번 명언이 등록되었습니다.");
     }
 

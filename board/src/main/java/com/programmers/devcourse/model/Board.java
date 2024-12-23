@@ -15,6 +15,11 @@ public class Board {
         });
     }
 
+    public Board(Map<Long,Saying>savedElements,Long lastIdx){
+        this.element = savedElements;
+        this.idx = lastIdx;
+    }
+
 
     public CommandType defineCommand(String command) {
         if (command.equals("등록")) {
@@ -29,9 +34,9 @@ public class Board {
         return CommandType.EXIT;
     }
 
-    public int add(Saying saying) {
-        element.putIfAbsent(idx++, saying);
-        return element.size();
+    public long add(Saying saying) {
+        element.putIfAbsent(idx, saying);
+        return idx++;
     }
 
     public Map<Long, Saying> getElementsMap() {
@@ -45,7 +50,9 @@ public class Board {
     public int getBoardSize() {
         return element.size();
     }
-
+    public Long getLastBoarNumber(){
+        return idx - 1;
+    }
     public void remove(Long id) {
         element.remove(id);
     }

@@ -4,9 +4,12 @@ import com.programmers.devcourse.model.Board;
 import com.programmers.devcourse.model.CommandType;
 import com.programmers.devcourse.model.Saying;
 import com.programmers.devcourse.view.InputView;
+import com.programmers.devcourse.view.JsonDBInputView;
+import com.programmers.devcourse.view.JsonDBOutputView;
 import com.programmers.devcourse.view.OutputView;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static com.programmers.devcourse.model.CommandType.*;
 
@@ -21,14 +24,18 @@ public class SayingController {
 
     public void run() throws IOException {
         outputView.printInit();
-        Board board = new Board();
+        Map<Long, Saying> savedSayingMap = JsonDBInputView.readSaying();
+        Long lastId = JsonDBInputView.readLastId();
+        Board board = new Board(savedSayingMap,lastId);
+
         while (true) {
             String command = inputView.command();
             CommandType commandType = board.defineCommand(command);
             if (commandType.equals(REGISTER)) {
                 Saying saying = inputView.inputSaying();
-                int boardNumber = board.add(saying);
+                long boardNumber = board.add(saying);
                 outputView.printRegisterNumber(boardNumber);
+                JsonDBOutputView.saveSaying(boardNumber, saying);
             } else if (commandType.equals(LIST)) {
                 outputView.printOptions();
                 outputView.printSayingInfo(board);
@@ -57,6 +64,7 @@ public class SayingController {
                 Saying modifySaying = element.modify(newAuthor, newContent);
                 board.modify(Long.parseLong(id), modifySaying);
             } else {
+                JsonDBOutputView.lastSayingNumber(board.getLastBoarNumber());
                 break;
             }
         }
