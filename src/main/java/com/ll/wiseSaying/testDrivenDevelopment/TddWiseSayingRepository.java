@@ -41,10 +41,32 @@ public class TddWiseSayingRepository {
     }
 
     public TddPage<TddWiseSaying> findAll(int pageNum, int pageSize) {
-        int start = (pageNum-1) * pageSize;
+        int start = Math.min((pageNum-1) * pageSize, wiseSayingList.size());
         int end = Math.min(start + pageSize, wiseSayingList.size());
 
         List<TddWiseSaying> result = wiseSayingList.subList(start, end);
+        return new TddPage<>(result, result.size() / pageSize + 1, pageNum);
+    }
+
+    public TddPage<TddWiseSaying> findAllByContent(int pageNum, int pageSize, String content) {
+        int start = (pageNum-1) * pageSize;
+        int end = Math.min(start + pageSize, wiseSayingList.size());
+
+        List<TddWiseSaying> result = wiseSayingList.stream()
+                .filter(w -> w.getContent().contains(content))
+                .toList().subList(start, end);
+
+        return new TddPage<>(result, result.size() / pageSize + 1, pageNum);
+    }
+
+    public TddPage<TddWiseSaying> findAllByAuthor(int pageNum, int pageSize, String author) {
+        int start = (pageNum-1) * pageSize;
+        int end = Math.min(start + pageSize, wiseSayingList.size());
+
+        List<TddWiseSaying> result = wiseSayingList.stream()
+                .filter(w -> w.getAuthor().contains(author))
+                .toList().subList(start, end);
+
         return new TddPage<>(result, result.size() / pageSize + 1, pageNum);
     }
 

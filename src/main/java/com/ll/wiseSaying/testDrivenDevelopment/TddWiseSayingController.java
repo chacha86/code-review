@@ -34,9 +34,23 @@ public class TddWiseSayingController {
 
         int pageSize = 5;
         int pageNum = 1;
-        TddPage<TddWiseSaying> page = null;
+        TddPage<TddWiseSaying> page;
 
-        if (!command.contains("?")) {
+        if (command.contains("page=")) {
+            pageNum = Integer.parseInt(command.split("page=")[1].split("&")[0]);
+        }
+
+        if (command.contains("keywordType=") && command.contains("keyword=")) {
+
+            System.out.println("----------------------\n검색타입 : ");
+            String keywordType = scanner.nextLine();
+            System.out.println("검색어 : ");
+            String keyword = scanner.nextLine();
+            System.out.println("----------------------");
+
+            page = service.findDetail(pageNum, pageSize, keywordType, keyword);
+        } else {
+
             page = service.findAll(pageNum, pageSize);
         }
 

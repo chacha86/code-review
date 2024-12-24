@@ -14,18 +14,6 @@ public class TddPage<T> {
         this.currentPage = currentPage;
     }
 
-    public List<T> getWiseSayingList() {
-        return wiseSayingList;
-    }
-
-    public int getTotalPage() {
-        return totalPage;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -39,8 +27,6 @@ public class TddPage<T> {
         sb.append("----------------------\n");
         sb.append("페이지 :");
 
-        System.out.println(currentPage+","+totalPage);
-
         for (int i=1; i<=totalPage; i++) {
             if (i == 1) {
                 sb.append(" ");
@@ -51,7 +37,7 @@ public class TddPage<T> {
             if (i == currentPage) {
                 sb.append("[").append(i).append("]");
             } else {
-                sb.append("i");
+                sb.append(i);
             }
         }
 

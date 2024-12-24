@@ -79,16 +79,20 @@ public class TddWiseSayingControllerTest {
     @DisplayName("페이지 검색")
     void testSearch2ndPage() {
         StringBuilder input = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            input.append("content").append(i + 1).append("\nauthor").append(i + 1).append("\n");
+        Scanner scanner = null;
+        for (int i = 1; i <= 10; i++) {
+            input.setLength(0);
+            input.append("content").append(i).append("\nauthor").append(i).append("\n");
+            scanner = TestUtil.genScanner(input.toString());
+            controller.register(scanner);
         }
-        Scanner scanner = TestUtil.genScanner(input.toString());
-        controller.register(scanner);
 
         controller.search(scanner, "목록?page=2");
 
         String output = outContent.toString();
         assertThat(output)
+                .contains("1번 명언이 등록되었습니다.")
+                .contains("10번 명언이 등록되었습니다.")
                 .contains("번호 / 작가 / 명언")
                 .contains("3 / author3 / content3")
                 .contains("페이지 : 1 / [2]");
