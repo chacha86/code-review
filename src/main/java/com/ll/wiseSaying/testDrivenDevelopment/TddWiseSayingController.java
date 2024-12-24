@@ -37,10 +37,12 @@ public class TddWiseSayingController {
 
         if (command.contains("keywordType=") && command.contains("keyword=")) {
 
-            System.out.println("----------------------\n검색타입 : ");
-            String keywordType = scanner.nextLine();
-            System.out.println("검색어 : ");
-            String keyword = scanner.nextLine();
+            String keywordType = command.split("keywordType=")[1].split("&")[0];
+            String keyword = command.split("keyword=")[1].split("&")[0];
+
+            System.out.println("----------------------");
+            System.out.println("검색타입 : " + keywordType);
+            System.out.println("검색어 : " + keyword);
             System.out.println("----------------------");
 
             page = service.findDetail(pageNum, pageSize, keywordType, keyword);

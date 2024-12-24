@@ -105,19 +105,23 @@ public class TddWiseSayingControllerTest {
     @DisplayName("명언 키워드 검색")
     void testSearchContentKeyword() {
         StringBuilder input = new StringBuilder();
+        Scanner scanner = null;
         for (int i = 0; i < 5; i++) {
-            input.append("content").append(i / 2).append("\nauthor").append(i + 1).append("\n");
+            input.setLength(0);
+            input.append("content").append(i % 2).append("\nauthor").append(i + 1).append("\n");
+            scanner = TddTestUtil.genScanner(input.toString());
+            controller.register(scanner);
         }
-        Scanner scanner = TddTestUtil.genScanner(input.toString());
-        controller.register(scanner);
+
 
         controller.search(scanner, "목록?keywordType=content&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
                 .contains("번호 / 작가 / 명언")
-                .contains("1 / author1 / content1")
-                .doesNotContain("2 / author2 / content0")
+                .contains("4 / author4 / content1")
+                .contains("2 / author2 / content1")
+                .doesNotContain("1 / author1 / content0")
                 .contains("페이지 :");
     }
 
@@ -125,19 +129,22 @@ public class TddWiseSayingControllerTest {
     @DisplayName("작가 키워드 검색")
     void testSearchAuthorKeyword() {
         StringBuilder input = new StringBuilder();
+        Scanner scanner = null;
         for (int i = 0; i < 5; i++) {
-            input.append("content").append(i + 1).append("\nauthor").append(i / 2).append("\n");
+            input.setLength(0);
+            input.append("content").append(i + 1).append("\nauthor").append(i % 2).append("\n");
+            scanner = TddTestUtil.genScanner(input.toString());
+            controller.register(scanner);
         }
-        Scanner scanner = TddTestUtil.genScanner(input.toString());
-        controller.register(scanner);
 
         controller.search(scanner, "목록?keywordType=author&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
                 .contains("번호 / 작가 / 명언")
-                .doesNotContain("1 / author1 / content1")
-                .contains("2 / author2 / content0")
+                .contains("4 / author1")
+                .contains("2 / author1")
+                .doesNotContain("1 / author0")
                 .contains("페이지 :");
     }
 
@@ -145,21 +152,33 @@ public class TddWiseSayingControllerTest {
     @DisplayName("키워드 전체 검색")
     void testSearchComplexKeyword() {
         StringBuilder input = new StringBuilder();
+        Scanner scanner = null;
         for (int i = 0; i < 18; i++) {
-            input.append("content").append(i + 1).append("\nauthor").append(i / 2).append("\n");
+            input.setLength(0);
+            input.append("content").append(i + 1).append("\nauthor").append(i % 2).append("\n");
+            scanner = TddTestUtil.genScanner(input.toString());
+            controller.register(scanner);
         }
-        Scanner scanner = TddTestUtil.genScanner(input.toString());
-        controller.register(scanner);
 
         controller.search(scanner, "목록?page=2&keywordType=author&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
                 .contains("번호 / 작가 / 명언")
-                .doesNotContain("1 / author1 / content1")
-                .contains("2 / author2 / content0")
+                .contains("2 / author1")
                 .contains("페이지 :")
                 .contains("[2]");
+    }
+
+    @Test
+    @DisplayName("잘못된 키워드")
+    void testSearch_InvalidKeyword() {
+    }
+
+    @Test
+    @DisplayName("검색 결과가 존재하지 않음")
+    void testSearch_EmptyResult() {
+
     }
 
     @Test
