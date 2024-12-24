@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 public class App {
     private int lastId = 0;
-    private int wiseSayingSize = 0;
     private final ArrayList<WiseSaying> wiseSayingList = new ArrayList<>();
 
     Scanner scanner = new Scanner(System.in);
@@ -13,6 +12,7 @@ public class App {
     public void run() {
 
         add("꿈을 지녀라. 그러면 어려운 현실을 이길 수 있다.", "월트 디즈니");
+        add("현재를 사랑하라", "작자 미상");
 
         System.out.println("== 명언 앱 ==");
         while (true) {
@@ -27,15 +27,32 @@ public class App {
                 writeWiseSaying();
             } else if (command.equals("목록")) {
                 printWiseSayingList();
+            } else if(command.startsWith("삭제?id=")) {
+                deleteWiseSaying();
             }
         }
+    }
+
+    private void deleteWiseSaying() {
+        System.out.println("삭제");
+        // wiseSayingList.remove(1); // 1번째 명언 삭제 -> 명언의 번호와 배열의 index가 아무 상관이 없다.
+
+        // 1. 아이디가 1인 명언의 index를 얻는다.
+        // 2. 아이디가 1인 명언의 값 자체를 얻는다.
+        for(WiseSaying wiseSaying : wiseSayingList) {
+            if(wiseSaying.getId() == 1) {
+                wiseSayingList.remove(wiseSaying);
+                break;
+            }
+        }
+
     }
 
     private void printWiseSayingList() {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        for (int i = 0; i < wiseSayingList.size(); i++) {
+        for(int i = wiseSayingList.size() - 1; i >= 0; i--) {
             WiseSaying wiseSaying = wiseSayingList.get(i);
             System.out.println("%d / %s / %s".formatted(wiseSaying.getId(), wiseSaying.getAuthor(), wiseSaying.getContent()));
         }
