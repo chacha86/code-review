@@ -65,6 +65,7 @@ public class WiseSayingService {
     public void paging(List<WiseSaying> list, int page) {
         int size = list.size();
         int offset = (page - 1) * 5;
+        if (list.isEmpty()) return ;
         if (offset < 0 || offset > size - 1) {
             System.out.println("요청하신 페이지에 데이터가 없습니다.");
             return;
