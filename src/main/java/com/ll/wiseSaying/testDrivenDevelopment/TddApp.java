@@ -25,6 +25,7 @@ public class TddApp {
                 case "종료" -> {
                     return;
                 }
+                default -> System.out.println("명령을 입력해주세요.");
             }
         }
     }

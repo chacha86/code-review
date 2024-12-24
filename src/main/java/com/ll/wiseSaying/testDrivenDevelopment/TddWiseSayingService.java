@@ -13,4 +13,8 @@ public class TddWiseSayingService {
     public int registerWiseSaying(String author, String content) {
         return repository.registerWiseSaying(author, content);
     }
+
+    public TddPage<TddWiseSaying> findAll(int pageNum, int pageSize) {
+        return repository.findAll(pageNum, pageSize);
+    }
 }

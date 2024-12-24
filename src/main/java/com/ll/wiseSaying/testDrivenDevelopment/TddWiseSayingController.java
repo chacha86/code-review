@@ -16,6 +16,7 @@ public class TddWiseSayingController {
     private final TddWiseSayingService service = TddWiseSayingService.getInstance();
 
     public void register(Scanner scanner) {
+
         System.out.print("명언 : ");
         String content = scanner.nextLine();
         System.out.print("작가 : ");
@@ -31,6 +32,15 @@ public class TddWiseSayingController {
 
     public void search(Scanner scanner, String command) {
 
+        int pageSize = 5;
+        int pageNum = 1;
+        TddPage<TddWiseSaying> page = null;
+
+        if (!command.contains("?")) {
+            page = service.findAll(pageNum, pageSize);
+        }
+
+        System.out.println(page);
     }
 
     public void modify(Scanner scanner, String command) {

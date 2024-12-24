@@ -72,7 +72,7 @@ public class TddWiseSayingControllerTest {
         assertThat(output)
                 .contains("번호 / 작가 / 명언")
                 .contains("1 / 작자미상 / 현재를 사랑하라.")
-                .contains("페이지 :");
+                .contains("페이지 : [1]");
     }
 
     @Test
