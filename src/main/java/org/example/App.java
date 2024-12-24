@@ -1,5 +1,10 @@
 package org.example;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +16,11 @@ import java.util.List;
 
 public class App {
     private final List<Quote> quotes = new ArrayList<>();
-    private final String dbPath = "db/wiseSaying";
+    private final String DB_PATH = "db/wiseSaying";
+    private final String LAST_ID_FILE = DB_PATH + "/lastId.txt";
     private int lastId = 0;
 
-    public void run() throws IOException {
+    public void run() throws IOException, ParseException {
         System.out.println("== 명언 앱 ==");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         initDatabase();
@@ -26,34 +32,68 @@ public class App {
             if (command.equals("종료")) {
                 System.out.println("명언 앱을 종료합니다.");
                 break;
-            } else if (command.equals("등록")) {
-                createQuote(br);
-            } else if (command.equals("목록")) {
-                printQuotes();
-            } else if (command.startsWith("삭제?id=")) {
-                int id = Integer.parseInt(command.split("=")[1]);
-                deleteQuoteById(id);
-            } else if (command.startsWith("수정?id=")) {
-                int id = Integer.parseInt(command.split("=")[1]);
-                updateQuoteById(id, br);
             }
+
+            handleCommand(command, br);
         }
     }
 
-    /// 파일 영속성
-    public void initDatabase() throws IOException {
-        Files.createDirectories(Paths.get(dbPath));
+    /// 명령어 핸들러
+    public void handleCommand(String command, BufferedReader br) throws IOException {
+        if (command.equals("등록")) {
+            createQuote(br);
+        } else if (command.equals("목록")) {
+            printQuotes();
+        } else if (command.startsWith("삭제?id=")) {
+            int id = Integer.parseInt(command.split("=")[1]);
+            deleteQuoteById(id);
+        } else if (command.startsWith("수정?id=")) {
+            int id = Integer.parseInt(command.split("=")[1]);
+            updateQuoteById(id, br);
+        } else if (command.equals("빌드")) {
+            buildDataJson();
+        } else {
+            System.out.println("알 수 없는 명령입니다.");
+        }
+    }
 
-        File lastIdFile = new File(dbPath, "lastId.txt");
+    /// 빌드 명령어
+    public void buildDataJson() throws IOException {
+        System.out.println("빌드 전 " + quotes.size());
+        JSONArray jsonArray = new JSONArray();
+
+        for (Quote quote : quotes) {
+            JSONObject json = new JSONObject();
+            json.put("id", quote.getId());
+            json.put("author", quote.getAuthor());
+            json.put("content", quote.getContent());
+            jsonArray.add(json);
+        }
+
+        File file = new File(DB_PATH, "data.json");
+        Files.writeString(file.toPath(), jsonArray.toJSONString());
+
+        System.out.println("빌드 후 " + quotes.size());
+    }
+
+    /// 파일 영속성 초기화
+    public void initDatabase() throws IOException, ParseException {
+        Files.createDirectories(Paths.get(DB_PATH));
+
+        File lastIdFile = new File(LAST_ID_FILE);
         if (lastIdFile.exists()) {
             lastId = Integer.parseInt(Files.readString(lastIdFile.toPath()).trim());
         }
 
-        File[] files = new File(dbPath).listFiles(((dir, name) -> name.endsWith(".json")));
-        if (files != null) {
-            for (File file : files) {
-                String q = Files.readString(file.toPath());
-                Quote quote = parseQuote(q);
+        File jsonFile = new File(DB_PATH, "data.json");
+        if (jsonFile.exists()) {
+            String content = Files.readString(jsonFile.toPath());
+            JSONParser jsonParser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(content);
+
+            for (Object obj : jsonArray) {
+                JSONObject json = (JSONObject) obj;
+                Quote quote = parseQuote(json);
                 if (quote != null) {
                     quotes.add(quote);
                 }
@@ -62,13 +102,10 @@ public class App {
     }
 
     /// JSON -> Quote
-    public Quote parseQuote(String q) {
-        q = q.trim();
-        String[] lines = q.split("\n");
-
-        int id = Integer.parseInt(lines[1].split(":")[1].trim().replace(",", ""));
-        String author = lines[2].split(":")[1].trim().replace("\"", "").replace(",", "");
-        String content = lines[3].split(":")[1].trim().replace("\"", "").replace("}", "");
+    public Quote parseQuote(JSONObject json) {
+        int id = Integer.parseInt(json.get("id").toString());
+        String author = json.get("author").toString();
+        String content = json.get("content").toString();
 
         return new Quote(id, author, content);
     }
@@ -80,6 +117,7 @@ public class App {
         System.out.print("작가: ");
         String author = br.readLine();
         lastId++;
+
         Quote quote = new Quote(lastId, author, content);
         quotes.add(quote);
         saveQuoteToFile(quote);
@@ -90,20 +128,18 @@ public class App {
 
     /// Quote -> File
     public void saveQuoteToFile(Quote quote) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("\"id\": ").append(quote.getId()).append(",\n");
-        sb.append("\"author\": \"").append(quote.getAuthor()).append("\",\n");
-        sb.append("\"content\": \"").append(quote.getContent()).append("\"\n");
-        sb.append("}");
+        JSONObject json = new JSONObject();
+        json.put("id", quote.getId());
+        json.put("author", quote.getAuthor());
+        json.put("content", quote.getContent());
 
-        File file = new File(dbPath, quote.getId() + ".json");
-        Files.writeString(file.toPath(), sb.toString());
+        File file = new File(DB_PATH, quote.getId() + ".json");
+        Files.writeString(file.toPath(), json.toString());
     }
 
     /// LastId -> File
     public void saveLastId() throws IOException {
-        File lastIdFile = new File(dbPath, "lastId.txt");
+        File lastIdFile = new File(LAST_ID_FILE);
         Files.writeString(lastIdFile.toPath(), String.valueOf(lastId));
     }
 
@@ -148,7 +184,7 @@ public class App {
         for (int i = 0; i < quotes.size(); i++) {
             if (quotes.get(i).getId() == id) {
                 quotes.remove(i);
-                File file = new File(dbPath, id + ".json");
+                File file = new File(DB_PATH, id + ".json");
                 if (file.exists()) {
                     file.delete();
                 }
