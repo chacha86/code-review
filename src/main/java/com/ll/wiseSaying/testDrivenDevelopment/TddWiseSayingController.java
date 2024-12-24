@@ -21,6 +21,10 @@ public class TddWiseSayingController {
         System.out.print("작가 : ");
         String author = scanner.nextLine();
 
+        if (content.isEmpty() || author.isEmpty()) {
+            throw new IllegalArgumentException("명언과 작가를 모두 입력해주세요.");
+        }
+
         int id = service.registerWiseSaying(author, content);
         System.out.println(id + "번 명언이 등록되었습니다.");
     }

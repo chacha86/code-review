@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.Scanner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TddWiseSayingControllerTest {
 
@@ -41,6 +43,20 @@ public class TddWiseSayingControllerTest {
                 .contains("명언 :")
                 .contains("작가 :")
                 .contains("1번 명언이 등록되었습니다.");
+    }
+
+    @Test
+    @DisplayName("등록: 빈 명언")
+    void testRegistration_EmptyContent() {
+        String input = "\n작자미상";
+        Scanner scanner = TestUtil.genScanner(input);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> controller.register(scanner));
+
+        String output = outContent.toString();
+        assertThat(output)
+                .doesNotContain("1번 명언이 등록되었습니다.");
+        assertEquals(exception.getMessage(), "명언과 작가를 모두 입력해주세요.");
     }
 
     @Test
