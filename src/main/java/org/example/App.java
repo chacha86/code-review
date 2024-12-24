@@ -32,19 +32,27 @@ public class App {
                 String strId = command.substring(6);
                 int id = Integer.parseInt(strId);
 
-                deleteWiseSaying(id);
-                System.out.println("%d번 명언이 삭제되었습니다.".formatted(id));
+                boolean result = deleteWiseSaying(id);
+
+                if(result) {
+                    System.out.println("%d번 명언이 삭제되었습니다.".formatted(id));
+                } else {
+                    System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+                }
             }
         }
     }
-    // [a:0, b:1, c:2]
-    private void deleteWiseSaying(int targetId) {
+
+    private boolean deleteWiseSaying(int targetId) {
+
         for(WiseSaying wiseSaying : wiseSayingList) {
             if(wiseSaying.getId() == targetId) {
                 wiseSayingList.remove(wiseSaying);
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 
     private void printWiseSayingList() {
