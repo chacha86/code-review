@@ -1,9 +1,10 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -178,7 +179,9 @@ class App {
                 System.out.println(jsonArray);
 
                 try{
+
                     String beautyJson = beautyJson(jsonArray);
+                    System.out.println(beautyJson);
 
                     FileWriter file = new FileWriter("D:/dev/dev_back4/code-review/db/wiseSaying/data.json");
                     file.write(beautyJson);
@@ -213,18 +216,16 @@ class App {
             ObjectMapper objectMapper = new ObjectMapper();
 
             Object json = objectMapper.readValue(obj.toString(), Object.class);
-            String beautyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-            return beautyJson;
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
 
     }
 
     public String beautyJson(JSONArray obj) throws IOException{
 
-            ObjectMapper objectMapper = new ObjectMapper();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonElement jsonElement = JsonParser.parseString(obj.toString());
 
-            Object json = objectMapper.readValue(obj.toString(), Object.class);
-            String beautyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-            return beautyJson;
+            return gson.toJson(jsonElement);
 
     }
 
