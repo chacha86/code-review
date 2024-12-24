@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 
-public class AppTest {
+public class TddAppTest {
 
     private static final String DBPATH = "db/wiseSaying";
 

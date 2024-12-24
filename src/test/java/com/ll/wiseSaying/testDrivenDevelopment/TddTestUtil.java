@@ -3,7 +3,7 @@ package com.ll.wiseSaying.testDrivenDevelopment;
 import java.io.*;
 import java.util.Scanner;
 
-public class TestUtil {
+public class TddTestUtil {
     // gen == generate 생성하다.
     // 테스트용 스캐너 생성
     public static Scanner genScanner(final String input) {

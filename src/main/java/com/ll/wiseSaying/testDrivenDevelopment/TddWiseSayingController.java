@@ -4,16 +4,11 @@ import java.util.Scanner;
 
 public class TddWiseSayingController {
 
-    private final static TddWiseSayingController instance = new TddWiseSayingController();
+    private final TddWiseSayingService service;
 
-    private TddWiseSayingController() {
+    public TddWiseSayingController(TddWiseSayingService service) {
+        this.service = service;
     }
-
-    public static synchronized TddWiseSayingController getInstance() {
-        return instance;
-    }
-
-    private final TddWiseSayingService service = TddWiseSayingService.getInstance();
 
     public void register(Scanner scanner) {
 

@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class TddApp {
 
-    private final TddWiseSayingController controller = TddWiseSayingController.getInstance();
+    private final TddWiseSayingController controller = getController();
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
@@ -28,5 +28,11 @@ public class TddApp {
                 default -> System.out.println("명령을 입력해주세요.");
             }
         }
+    }
+
+    public TddWiseSayingController getController() {
+        TddWiseSayingRepository repository = new TddWiseSayingRepository();
+        TddWiseSayingService service = new TddWiseSayingService(repository);
+        return new TddWiseSayingController(service);
     }
 }

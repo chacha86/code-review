@@ -1,9 +1,6 @@
 package com.ll.wiseSaying.testDrivenDevelopment;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.nio.file.Files;
 import java.io.*;
@@ -20,21 +17,27 @@ public class TddWiseSayingControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        AppTest.clear();
-        controller = TddWiseSayingController.getInstance();
-        outContent = com.ll.wiseSaying.basicDevelopment.TestUtil.setOutToByteArray();
+        TddAppTest.clear();
+        controller = new TddApp().getController();
+        outContent = TddTestUtil.setOutToByteArray();
     }
 
     @AfterEach
     void afterEach() {
-        TestUtil.clearSetOutToByteArray(outContent);
+        TddTestUtil.clearSetOutToByteArray(outContent);
+    }
+
+    @Test
+    @DisplayName("빈 테스트")
+    void test_Empty() {
+
     }
 
     @Test
     @DisplayName("등록")
     void testRegistration() {
         String input = "현재를 사랑하라.\n작자미상";
-        Scanner scanner = TestUtil.genScanner(input);
+        Scanner scanner = TddTestUtil.genScanner(input);
 
         controller.register(scanner);
 
@@ -49,7 +52,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("등록: 빈 명언")
     void testRegistration_EmptyContent() {
         String input = "\n작자미상";
-        Scanner scanner = TestUtil.genScanner(input);
+        Scanner scanner = TddTestUtil.genScanner(input);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> controller.register(scanner));
 
@@ -63,7 +66,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("단순 검색")
     void testSearchAll() {
         String input = "현재를 사랑하라.\n작자미상";
-        Scanner scanner = TestUtil.genScanner(input);
+        Scanner scanner = TddTestUtil.genScanner(input);
         controller.register(scanner);
 
         controller.search(scanner, "목록");
@@ -83,7 +86,7 @@ public class TddWiseSayingControllerTest {
         for (int i = 1; i <= 10; i++) {
             input.setLength(0);
             input.append("content").append(i).append("\nauthor").append(i).append("\n");
-            scanner = TestUtil.genScanner(input.toString());
+            scanner = TddTestUtil.genScanner(input.toString());
             controller.register(scanner);
         }
 
@@ -105,7 +108,7 @@ public class TddWiseSayingControllerTest {
         for (int i = 0; i < 5; i++) {
             input.append("content").append(i / 2).append("\nauthor").append(i + 1).append("\n");
         }
-        Scanner scanner = TestUtil.genScanner(input.toString());
+        Scanner scanner = TddTestUtil.genScanner(input.toString());
         controller.register(scanner);
 
         controller.search(scanner, "목록?keywordType=content&keyword=1");
@@ -125,7 +128,7 @@ public class TddWiseSayingControllerTest {
         for (int i = 0; i < 5; i++) {
             input.append("content").append(i + 1).append("\nauthor").append(i / 2).append("\n");
         }
-        Scanner scanner = TestUtil.genScanner(input.toString());
+        Scanner scanner = TddTestUtil.genScanner(input.toString());
         controller.register(scanner);
 
         controller.search(scanner, "목록?keywordType=author&keyword=1");
@@ -145,7 +148,7 @@ public class TddWiseSayingControllerTest {
         for (int i = 0; i < 18; i++) {
             input.append("content").append(i + 1).append("\nauthor").append(i / 2).append("\n");
         }
-        Scanner scanner = TestUtil.genScanner(input.toString());
+        Scanner scanner = TddTestUtil.genScanner(input.toString());
         controller.register(scanner);
 
         controller.search(scanner, "목록?page=2&keywordType=author&keyword=1");
@@ -163,11 +166,11 @@ public class TddWiseSayingControllerTest {
     @DisplayName("수정")
     void testModify() {
         String existInput = "현재를 사랑하라.\n작자미상";
-        Scanner scanner = TestUtil.genScanner(existInput);
+        Scanner scanner = TddTestUtil.genScanner(existInput);
         controller.register(scanner);
 
         String newInput = "현재와 자신을 사랑하라.\n홍길동";
-        scanner = TestUtil.genScanner(newInput);
+        scanner = TddTestUtil.genScanner(newInput);
 
         controller.modify(scanner, "수정?id=1");
         controller.search(scanner, "목록");
@@ -183,7 +186,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("삭제 성공")
     void testDelete_Success() {
         String input = "현재를 사랑하라.\n작자미상";
-        Scanner scanner = TestUtil.genScanner(input);
+        Scanner scanner = TddTestUtil.genScanner(input);
         controller.register(scanner);
 
         controller.delete("삭제?id=1");
@@ -207,7 +210,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("빌드")
     void testBuild() throws IOException {
         String input = "현재를 사랑하라.\n작자미상";
-        Scanner scanner = TestUtil.genScanner(input);
+        Scanner scanner = TddTestUtil.genScanner(input);
         controller.register(scanner);
 
         controller.build();

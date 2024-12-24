@@ -10,17 +10,13 @@ import static java.nio.file.Files.readAllBytes;
 
 public class TddWiseSayingRepository {
 
-    private final static TddWiseSayingRepository instance = new TddWiseSayingRepository();
-    private TddWiseSayingRepository() {
+    public TddWiseSayingRepository() {
         File folder = new File(DBPATH);
         if (!folder.exists()) {
             folder.mkdirs();
         }
 
         loadAllFromFile();
-    }
-    public static synchronized TddWiseSayingRepository getInstance() {
-        return instance;
     }
 
     private static final String DBPATH = "db/wiseSaying";
@@ -122,6 +118,8 @@ public class TddWiseSayingRepository {
                 } catch (IOException ignored) {
                 }
             }
+
+            wiseSayingList.sort(Comparator.comparingInt(TddWiseSaying::getId).reversed());
         }
     }
 }
