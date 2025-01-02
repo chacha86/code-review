@@ -1,11 +1,15 @@
-package org.example;
+package org.example.wiseSaying;
 
-public class Quote {
+/**
+ *  명언 객체
+ */
+
+public class WiseSaying {
     private final int id;
     private String author;
     private String content;
 
-    public Quote(int id, String author, String content) {
+    public WiseSaying(int id, String author, String content) {
         this.id = id;
         this.author = author;
         this.content = content;
