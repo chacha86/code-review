@@ -1,6 +1,6 @@
 package com.ll.wiseSaying.testDrivenDevelopment;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class TddWiseSayingController {
 
@@ -25,29 +25,37 @@ public class TddWiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    public void search(Scanner scanner, String command) {
+    public void search(String command) {
 
         int pageSize = 5;
         int pageNum = 1;
         TddPage<TddWiseSaying> page;
 
-        if (command.contains("page=")) {
-            pageNum = Integer.parseInt(command.split("page=")[1].split("&")[0]);
+        Map<String, String> keywordList = service.parseSearchKeyword(command);
+        if (!service.validateSearchKeyword(keywordList)) {
+            throw new IllegalArgumentException("명령을 다시 확인해주세요.");
         }
 
-        if (command.contains("keywordType=") && command.contains("keyword=")) {
+        if (!keywordList.isEmpty()) {
+            if (keywordList.containsKey("page")) {
+                pageNum = Integer.parseInt(keywordList.get("page"));
+            }
 
-            String keywordType = command.split("keywordType=")[1].split("&")[0];
-            String keyword = command.split("keyword=")[1].split("&")[0];
+            if (keywordList.size()==1) {
+                page = service.findAll(pageNum, pageSize);
+            } else {
 
-            System.out.println("----------------------");
-            System.out.println("검색타입 : " + keywordType);
-            System.out.println("검색어 : " + keyword);
-            System.out.println("----------------------");
+                String keywordType = command.split("keywordType=")[1].split("&")[0];
+                String keyword = command.split("keyword=")[1].split("&")[0];
 
-            page = service.findDetail(pageNum, pageSize, keywordType, keyword);
+                System.out.println("----------------------");
+                System.out.println("검색타입 : " + keywordType);
+                System.out.println("검색어 : " + keyword);
+                System.out.println("----------------------");
+
+                page = service.findDetail(pageNum, pageSize, keywordType, keyword);
+            }
         } else {
-
             page = service.findAll(pageNum, pageSize);
         }
 

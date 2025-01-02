@@ -18,7 +18,7 @@ public class TddApp {
 
             switch (mainCommand) {
                 case "등록" -> controller.register(scanner);
-                case "목록" -> controller.search(scanner, command);
+                case "목록" -> controller.search(command);
                 case "수정" -> controller.modify(scanner, command);
                 case "삭제" -> controller.delete(command);
                 case "빌드" -> controller.build();

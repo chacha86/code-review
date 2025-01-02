@@ -54,7 +54,8 @@ public class TddWiseSayingControllerTest {
         String input = "\n작자미상";
         Scanner scanner = TddTestUtil.genScanner(input);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> controller.register(scanner));
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> controller.register(scanner));
 
         String output = outContent.toString();
         assertThat(output)
@@ -69,7 +70,7 @@ public class TddWiseSayingControllerTest {
         Scanner scanner = TddTestUtil.genScanner(input);
         controller.register(scanner);
 
-        controller.search(scanner, "목록");
+        controller.search("목록");
 
         String output = outContent.toString();
         assertThat(output)
@@ -82,7 +83,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("페이지 검색")
     void testSearch2ndPage() {
         StringBuilder input = new StringBuilder();
-        Scanner scanner = null;
+        Scanner scanner;
         for (int i = 1; i <= 10; i++) {
             input.setLength(0);
             input.append("content").append(i).append("\nauthor").append(i).append("\n");
@@ -90,7 +91,7 @@ public class TddWiseSayingControllerTest {
             controller.register(scanner);
         }
 
-        controller.search(scanner, "목록?page=2");
+        controller.search("목록?page=2");
 
         String output = outContent.toString();
         assertThat(output)
@@ -105,7 +106,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("명언 키워드 검색")
     void testSearchContentKeyword() {
         StringBuilder input = new StringBuilder();
-        Scanner scanner = null;
+        Scanner scanner;
         for (int i = 0; i < 5; i++) {
             input.setLength(0);
             input.append("content").append(i % 2).append("\nauthor").append(i + 1).append("\n");
@@ -114,7 +115,7 @@ public class TddWiseSayingControllerTest {
         }
 
 
-        controller.search(scanner, "목록?keywordType=content&keyword=1");
+        controller.search("목록?keywordType=content&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
@@ -129,7 +130,7 @@ public class TddWiseSayingControllerTest {
     @DisplayName("작가 키워드 검색")
     void testSearchAuthorKeyword() {
         StringBuilder input = new StringBuilder();
-        Scanner scanner = null;
+        Scanner scanner;
         for (int i = 0; i < 5; i++) {
             input.setLength(0);
             input.append("content").append(i + 1).append("\nauthor").append(i % 2).append("\n");
@@ -137,7 +138,7 @@ public class TddWiseSayingControllerTest {
             controller.register(scanner);
         }
 
-        controller.search(scanner, "목록?keywordType=author&keyword=1");
+        controller.search("목록?keywordType=author&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
@@ -149,10 +150,10 @@ public class TddWiseSayingControllerTest {
     }
 
     @Test
-    @DisplayName("키워드 전체 검색")
+    @DisplayName("키워드 복합 검색")
     void testSearchComplexKeyword() {
         StringBuilder input = new StringBuilder();
-        Scanner scanner = null;
+        Scanner scanner;
         for (int i = 0; i < 18; i++) {
             input.setLength(0);
             input.append("content").append(i + 1).append("\nauthor").append(i % 2).append("\n");
@@ -160,7 +161,7 @@ public class TddWiseSayingControllerTest {
             controller.register(scanner);
         }
 
-        controller.search(scanner, "목록?page=2&keywordType=author&keyword=1");
+        controller.search("목록?page=2&keywordType=author&keyword=1");
 
         String output = outContent.toString();
         assertThat(output)
@@ -171,14 +172,50 @@ public class TddWiseSayingControllerTest {
     }
 
     @Test
-    @DisplayName("잘못된 키워드")
-    void testSearch_InvalidKeyword() {
+    @DisplayName("잘못된 키워드: 존재하지 않는 항목")
+    void testSearch_InvalidSearchKeyword() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () ->controller.search("목록?keyboard=3"));
+
+        String output = outContent.toString();
+        assertThat(output)
+                .doesNotContain("번호 / 작가 / 명언");
+        assertEquals(exception.getMessage(), "명령을 다시 확인해주세요.");
+    }
+
+    @Test
+    @DisplayName("잘못된 키워드: keywordType&keyword 세트가 아님")
+    void testSearch_NotSufficientSearchKeyword() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () ->controller.search("목록?keyword=key"));
+
+        String output = outContent.toString();
+        assertThat(output)
+                .doesNotContain("번호 / 작가 / 명언");
+        assertEquals(exception.getMessage(), "명령을 다시 확인해주세요.");
     }
 
     @Test
     @DisplayName("검색 결과가 존재하지 않음")
     void testSearch_EmptyResult() {
+        controller.search("목록?page=1&keywordType=content&keyword=현재");
 
+        String output = outContent.toString();
+        assertThat(output)
+                .contains("번호 / 작가 / 명언")
+                .contains("검색 결과가 존재하지 않습니다.")
+                .doesNotContain("1 / 작자미상 / 현재를 사랑하라.");
+    }
+
+    @Test
+    @DisplayName("범위를 벗어난 페이지")
+    void testSearch_OutOfBounds() {
+        controller.search("목록?page=100");
+
+        String output = outContent.toString();
+        assertThat(output)
+                .contains("번호 / 작가 / 명언")
+                .contains("검색 결과가 존재하지 않습니다.");
     }
 
     @Test
@@ -192,7 +229,7 @@ public class TddWiseSayingControllerTest {
         scanner = TddTestUtil.genScanner(newInput);
 
         controller.modify(scanner, "수정?id=1");
-        controller.search(scanner, "목록");
+        controller.search("목록");
 
         String output = outContent.toString();
         assertThat(output)
