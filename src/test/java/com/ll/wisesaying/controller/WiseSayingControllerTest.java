@@ -2,6 +2,7 @@ package com.ll.wisesaying.controller;
 
 import com.ll.wisesaying.service.WiseSayingService;
 import com.ll.wisesaying.repository.WiseSayingRepository;
+import com.ll.wisesaying.util.InputUtil;
 import com.ll.wisesaying.util.TestUtil;
 
 import org.junit.jupiter.api.AfterEach;
@@ -61,6 +62,7 @@ public class WiseSayingControllerTest {
                 작자미상
                 """;
         System.setIn(TestUtil.getInputStream(input));
+        InputUtil.resetBufferedReader();
 
         // When
         controller.register();
@@ -96,6 +98,7 @@ public class WiseSayingControllerTest {
             수정된 작가
             """;
         System.setIn(TestUtil.getInputStream(input));
+        InputUtil.resetBufferedReader();
 
         controller.register();
 
@@ -118,6 +121,8 @@ public class WiseSayingControllerTest {
                 작자미상
                 """;
         System.setIn(TestUtil.getInputStream(input));
+        InputUtil.resetBufferedReader();
+
         controller.register();
 
         // When

@@ -13,7 +13,7 @@ import com.ll.wisesaying.domain.Search;
 import com.ll.wisesaying.exception.InputException;
 
 public class InputUtil {
-    public static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    public static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     public static final String END = "종료";
     public static final String ENROLL = "등록";
     public static final String LIST = "목록";
@@ -24,6 +24,10 @@ public class InputUtil {
     public static final String ENG_AUTHOR = "author";
     public static final String CMD_SEPARATOR = "\\?|id|=";
     public static final String SEARCH_SEPARATOR = "\\?|keywordType|&|keyword|page|=";
+
+    public static void resetBufferedReader() {
+        bf = new BufferedReader(new InputStreamReader(System.in));
+    }
 
     public static String inputMessage() throws IOException {
         return bf.readLine();
