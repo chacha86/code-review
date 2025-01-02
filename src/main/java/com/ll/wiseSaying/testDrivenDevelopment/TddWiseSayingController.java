@@ -63,14 +63,43 @@ public class TddWiseSayingController {
     }
 
     public void modify(Scanner scanner, String command) {
+        int id = service.parseId(command);
+        TddWiseSaying wiseSaying = service.findById(id);
 
+        if (wiseSaying == null) {
+            System.out.println(id + "번 명언은 존재하지 않습니다.");
+            return;
+        }
+
+        System.out.println("명언(기존) : " + wiseSaying.getContent());
+        System.out.print("명언 : ");
+        String newContent = scanner.nextLine();
+        System.out.println("작가(기존) : " + wiseSaying.getAuthor());
+        System.out.print("작가 : ");
+        String newAuthor = scanner.nextLine();
+
+        if (newAuthor.isBlank() || newContent.isBlank()) {
+            throw new IllegalArgumentException("정보를 모두 입력해주세요.");
+        }
+
+        service.modifyWiseSaying(id, newAuthor, newContent);
     }
 
     public void delete(String command) {
+        int id = service.parseId(command);
 
+        if (service.deleteById(id)) {
+            System.out.println(id + "번 명언이 삭제되었습니다.");
+        } else {
+            System.out.println(id + "번 명언은 존재하지 않습니다.");
+        }
     }
 
     public void build() {
-
+        if (service.saveAll()) {
+            System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+        } else {
+            throw new IllegalArgumentException("빌드에 실패했습니다.");
+        }
     }
 }

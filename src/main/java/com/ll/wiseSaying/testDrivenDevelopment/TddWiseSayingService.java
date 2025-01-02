@@ -56,4 +56,24 @@ public class TddWiseSayingService {
 
         return keywordList.containsKey("keywordType") == keywordList.containsKey("keyword");
     }
+
+    public int parseId(String command) {
+        return Integer.parseInt(command.split("id=")[1]);
+    }
+
+    public TddWiseSaying findById(int id) {
+        return repository.findById(id);
+    }
+
+    public void modifyWiseSaying(int id, String author, String content) {
+        repository.modifyWiseSaying(id, author, content);
+    }
+
+    public boolean deleteById(int id) {
+        return repository.deleteById(id);
+    }
+
+    public boolean saveAll() {
+        return repository.saveAll();
+    }
 }

@@ -66,6 +66,50 @@ public class TddWiseSayingRepository {
         return new TddPage<>(result.subList(start, end), result.size() / pageSize + 1, pageNum);
     }
 
+    public TddWiseSaying findById(int id) {
+        return wiseSayingList.stream()
+                .filter(w -> w.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void modifyWiseSaying(int id, String author, String content) {
+        TddWiseSaying wiseSaying = findById(id);
+        wiseSaying.setContent(content);
+        wiseSaying.setAuthor(author);
+        saveWiseSayingToFile(wiseSaying);
+    }
+
+    public boolean deleteById(int id) {
+        TddWiseSaying wiseSaying = findById(id);
+        wiseSayingList.remove(wiseSaying);
+        return new File(DBPATH + "/" + id + ".json").delete();
+    }
+
+    public boolean saveAll() {
+        try {
+            File file = new File(DBPATH + "/data.json");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write("[\n");
+            for (TddWiseSaying w : wiseSayingList) {
+                String json = "  {\n  \"id\": " + w.getId()
+                        + ",\n    \"content\": \"" + w.getContent()
+                        + "\",\n    \"author\": \"" + w.getAuthor() + "\"\n  }";
+                if (wiseSayingList.indexOf(w) < wiseSayingList.size()-1) {
+                    json += ",";
+                }
+                bw.write(json);
+            }
+            bw.write("\n]");
+            bw.flush();
+            bw.close();
+
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     private void saveWiseSayingToFile(TddWiseSaying wiseSaying) {
         try {
             File file = new File(DBPATH + "/" + wiseSaying.getId() + ".json");

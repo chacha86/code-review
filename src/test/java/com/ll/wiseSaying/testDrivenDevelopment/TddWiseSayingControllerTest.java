@@ -239,6 +239,36 @@ public class TddWiseSayingControllerTest {
     }
 
     @Test
+    @DisplayName("수정 실패: 명언이 존재하지 않음")
+    void testModify_NotFound() {
+        String input = "현재와 자신을 사랑하라.\n홍길동";
+        Scanner scanner = TddTestUtil.genScanner(input);
+
+        controller.modify(scanner, "수정?id=1");
+        controller.search("목록");
+
+        String output = outContent.toString();
+        assertThat(output)
+                .contains("1번 명언은 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("수정 실패: 수정사항이 적절하지 않음")
+    void testModify_InvalidArgument() {
+        String existInput = "현재를 사랑하라.\n작자미상";
+        Scanner existScanner = TddTestUtil.genScanner(existInput);
+        controller.register(existScanner);
+
+        String newInput = "\n ";
+        Scanner newScanner = TddTestUtil.genScanner(newInput);
+
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> controller.modify(newScanner, "수정?id=1"));
+
+        assertEquals(exception.getMessage(), "정보를 모두 입력해주세요.");
+    }
+
+    @Test
     @DisplayName("삭제 성공")
     void testDelete_Success() {
         String input = "현재를 사랑하라.\n작자미상";
@@ -282,8 +312,8 @@ public class TddWiseSayingControllerTest {
         [
           {
             "id": 1,
-            "author": "작자미상",
-            "content": "현재를 사랑하라."
+            "content": "현재를 사랑하라.",
+            "author": "작자미상"
           }
         ]
         """;

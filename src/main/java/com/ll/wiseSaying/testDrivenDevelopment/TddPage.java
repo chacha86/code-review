@@ -20,8 +20,6 @@ public class TddPage<T> {
         sb.append("번호 / 작가 / 명언\n");
         sb.append("----------------------\n");
 
-        System.out.println(wiseSayingList);
-        System.out.println(wiseSayingList.isEmpty());
         if (wiseSayingList.isEmpty() || currentPage>totalPage) {
             sb.append("검색 결과가 존재하지 않습니다.");
             return sb.toString();
