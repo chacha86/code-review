@@ -68,7 +68,10 @@ public class WiseSayingService {
             if (i == page) {
                 System.out.print("[" + i + "]");
             } else {
-                System.out.print(" / " + i);
+                System.out.print(i + " ");
+            }
+            if (i != totalPages) {
+                System.out.print(" / ");
             }
         }
         System.out.println();

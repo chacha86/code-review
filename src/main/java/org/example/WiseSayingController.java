@@ -96,7 +96,7 @@ public class WiseSayingController {
     }
 
     /// 명언 검색
-    public void searchWiseSaying(String keywordType, String keyword) throws IOException {
+    public void searchWiseSaying(String keywordType, String keyword) {
         System.out.println("----------------------");
         System.out.println("검색타입 : " + keywordType);
         System.out.println("검색어 : " + keyword);
