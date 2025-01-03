@@ -57,11 +57,11 @@ public class WiseSayingController {
 
 
     /// 명언 조회
-    public void printWiseSayings() {
+    public void printWiseSayings(String command) {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        wiseSayingService.printWiseSaying();
+        wiseSayingService.printWiseSaying(command);
     }
 
     /// 명언 수정

@@ -33,8 +33,8 @@ public class App {
     public void handleCommand(String command, BufferedReader br) throws IOException {
         if (command.equals("등록")) {
             wiseSayingController.createWiseSaying(br);
-        } else if (command.equals("목록")) {
-            wiseSayingController.printWiseSayings();
+        } else if (command.startsWith("목록")) {
+            wiseSayingController.printWiseSayings(command);
         } else if (command.startsWith("삭제?id=")) {
             int id = Integer.parseInt(command.split("=")[1]);
             wiseSayingController.deleteWiseSayingById(id);

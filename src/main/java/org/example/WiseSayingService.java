@@ -29,13 +29,49 @@ public class WiseSayingService {
         return wiseSayingRepository.findWiseSayingById(id);
     }
 
-    public void printWiseSaying() {
+    public void printWiseSaying(String command) {
+        int page = 1;
+        int itemsPerPage = 5;
+
+        if (command.contains("?page=")) {
+            try {
+                page = Integer.parseInt(command.split("=")[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("잘못된 페이지 번호입니다.");
+                return;
+            }
+        }
+
         List<WiseSaying> wiseSayings = findAllWiseSayings();
 
-        for (int i = wiseSayings.size() - 1; i >= 0; i--) {
+        wiseSayings.sort((ws1, ws2) -> Integer.compare(ws2.getId(), ws1.getId()));
+
+        int totalItems = wiseSayings.size();
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        if (page > totalPages) {
+            System.out.println("잘못된 페이지 번호입니다.");
+            return;
+        }
+
+        int startIndex = (page - 1) * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+        for (int i = startIndex; i < endIndex; i++) {
             WiseSaying wiseSaying = wiseSayings.get(i);
             System.out.printf("%d / %s / %s%n", wiseSaying.getId(), wiseSaying.getAuthor(), wiseSaying.getContent());
         }
+
+        System.out.println("----------------------");
+        System.out.print("페이지 : ");
+        for (int i = 1; i <= totalPages; i++) {
+            if (i == page) {
+                System.out.print("[" + i + "]");
+            } else {
+                System.out.print(" / " + i);
+            }
+        }
+        System.out.println();
     }
 
     public void printWiseSayingByKeyword(String keywordType, String keyword) {
