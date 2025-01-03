@@ -1,4 +1,5 @@
-import java.util.Collections;
+package wiseSaying;
+
 import java.util.Comparator;
 import java.util.List;
 

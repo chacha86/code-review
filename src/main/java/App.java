@@ -1,12 +1,17 @@
+import wiseSaying.SystemController;
+import wiseSaying.WiseSayingController;
+
 import java.util.Scanner;
 
 public class App {
     private final Scanner scanner;
     private final WiseSayingController controller;
+    private final SystemController systemController;
 
     public App(Scanner scanner, WiseSayingController controller) {
         this.scanner = scanner;
         this.controller = controller;
+        this.systemController = new SystemController();
     }
 
     public void run() {
@@ -16,11 +21,12 @@ public class App {
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             if (command.equals("종료")) {
+                systemController.exit();
                 break;
             } else if (command.equals("등록")) {
                 controller.register();
             } else if (command.equals("목록")) {
-                controller.getList(1);
+                controller.printList(1);
             } else if (command.startsWith("목록?")) {
                 controller.queryList(command);
             } else if (command.startsWith("삭제")) {

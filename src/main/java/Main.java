@@ -1,3 +1,7 @@
+import wiseSaying.WiseSayingController;
+import wiseSaying.WiseSayingRepository;
+import wiseSaying.WiseSayingService;
+
 import java.util.Scanner;
 
 public class Main {
