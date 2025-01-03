@@ -70,9 +70,9 @@ public class WiseSayingRepository {
     }
 
     /// LastId -> File
-    public void saveLastId() throws IOException {
+    public void saveLastId(WiseSaying wiseSaying) throws IOException {
         File lastIdFile = new File(LAST_ID_FILE);
-        Files.writeString(lastIdFile.toPath(), String.valueOf(lastId));
+        Files.writeString(lastIdFile.toPath(), String.valueOf(wiseSaying.getId()));
     }
 
     /// 명언 저장
@@ -118,6 +118,7 @@ public class WiseSayingRepository {
     /// data.json 갱신
     private void updateDataJsonFile() throws IOException {
         JSONArray jsonArray = new JSONArray();
+
         for (WiseSaying ws : wiseSayings) {
             JSONObject json = new JSONObject();
             json.put("id", ws.getId());

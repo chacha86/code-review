@@ -17,7 +17,7 @@ public class WiseSayingService {
     public void addWiseSaying(WiseSaying wiseSaying) throws IOException {
         wiseSayingRepository.saveWiseSaying(wiseSaying);
         wiseSayingRepository.saveWiseSayingToFile(wiseSaying);
-        wiseSayingRepository.saveLastId();
+        wiseSayingRepository.saveLastId(wiseSaying);
     }
 
     public List<WiseSaying> findAllWiseSayings() {
@@ -42,6 +42,7 @@ public class WiseSayingService {
         wiseSaying.setAuthor(newAuthor);
         wiseSayingRepository.saveWiseSaying(wiseSaying);
         wiseSayingRepository.saveWiseSayingToFile(wiseSaying);
+        wiseSayingRepository.saveLastId(wiseSaying);
     }
 
     public boolean deleteWiseSaying(int id) throws IOException {
