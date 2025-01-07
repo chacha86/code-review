@@ -19,8 +19,8 @@ public class WiseSayingController {
         System.out.print("작가 : ");
         String author = scanner.nextLine();
 
-        int newId = service.addOne(content, author);
-        System.out.println("%d번 명언이 등록되었습니다.".formatted(newId));
+        int newId = service.addOne(content, author).getId();
+        System.out.printf("%d번 명언이 등록되었습니다.%n", newId);
     }
 
     public void printList(int page) {

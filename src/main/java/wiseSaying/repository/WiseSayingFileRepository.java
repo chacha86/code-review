@@ -1,4 +1,6 @@
-package wiseSaying;
+package wiseSaying.repository;
+
+import wiseSaying.WiseSaying;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,22 +8,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class WiseSayingRepository {
+public class WiseSayingFileRepository implements WiseSayingRepository {
     private final String LAST_ID_FILE = "/lastId.txt";
     private final String DATA_FILE = "/data.json";
     private final Path dbPath;
 
-    public WiseSayingRepository() {
+    public WiseSayingFileRepository() {
         dbPath = Paths.get("db/wiseSaying");
         initDatabase();
     }
 
-    public WiseSayingRepository(Path dbPath) {
+    public WiseSayingFileRepository(Path dbPath) {
         this.dbPath = dbPath;
         initDatabase();
     }
@@ -58,7 +57,7 @@ public class WiseSayingRepository {
         }
     }
 
-    public int save(WiseSaying wiseSaying) {
+    public WiseSaying save(WiseSaying wiseSaying) {
         int nextId = getLastId() + 1;
         wiseSaying.setId(nextId);
         String json = wiseSaying.toJson();
@@ -71,23 +70,20 @@ public class WiseSayingRepository {
         }
 
         saveLastId(nextId);
-        return nextId;
+        return wiseSaying;
     }
 
-    public WiseSaying findOneById(int id) {
+    public Optional<WiseSaying> findOneById(int id) {
         Path filePath = Paths.get(dbPath.toString() + "/" + id + ".json");
-        if (Files.exists(filePath)) {
-            try {
-                String json = Files.readString(filePath);
-                return WiseSaying.fromJson(json);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read file: " + e.getMessage());
-            }
+        try {
+            String json = Files.readString(filePath);
+            return Optional.of(WiseSaying.fromJson(json));
+        } catch (IOException e) {
+            return Optional.empty();
         }
-        return null;
     }
 
-    public List<WiseSaying> findMany() {
+    public List<WiseSaying> findAll() {
         List<WiseSaying> wiseSayings = new ArrayList<>();
         for (File file : findFilesDescendingId()) {
             try {

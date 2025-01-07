@@ -1,7 +1,7 @@
 
 import common.utils.TestUtil;
 import wiseSaying.WiseSayingController;
-import wiseSaying.WiseSayingRepository;
+import wiseSaying.repository.WiseSayingFileRepository;
 import wiseSaying.WiseSayingService;
 
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ class AppTest {
         Scanner scanner = TestUtil.genScanner(input);
         out = TestUtil.setOutToByteArray();
 
-        WiseSayingRepository repository = new WiseSayingRepository(tempDbPath);
+        WiseSayingFileRepository repository = new WiseSayingFileRepository(tempDbPath);
         WiseSayingService service = new WiseSayingService(repository);
         WiseSayingController controller = new WiseSayingController(scanner, service);
 

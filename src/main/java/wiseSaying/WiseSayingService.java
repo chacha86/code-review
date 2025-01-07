@@ -1,22 +1,25 @@
 package wiseSaying;
 
+import wiseSaying.repository.WiseSayingFileRepository;
+
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class WiseSayingService {
 
-    private final WiseSayingRepository repository;
+    private final WiseSayingFileRepository repository;
 
-    public WiseSayingService(WiseSayingRepository repository) {
+    public WiseSayingService(WiseSayingFileRepository repository) {
         this.repository = repository;
     }
 
-    public int addOne(String content, String author) {
+    public WiseSaying addOne(String content, String author) {
         return repository.save(new WiseSaying(content, author));
     }
 
     public void getAll(int page) {
-        List<WiseSaying> wiseSayingList = repository.findMany();
+        List<WiseSaying> wiseSayingList = repository.findAll();
         paging(wiseSayingList, page);
     }
 
@@ -25,7 +28,7 @@ public class WiseSayingService {
     }
 
     public WiseSaying getOne(int id) {
-        return repository.findOneById(id);
+        return repository.findOneById(id).orElse(null);
     }
 
     public boolean updateOne(WiseSaying wiseSaying) {
@@ -33,7 +36,7 @@ public class WiseSayingService {
     }
 
     public void build() {
-        List<WiseSaying> wiseSayings = repository.findMany()
+        List<WiseSaying> wiseSayings = repository.findAll()
                 .stream().sorted(Comparator.comparingInt(WiseSaying::getId)).toList();
         StringBuilder jsonBuilder = new StringBuilder("[\n");
         for (int i = 0; i < wiseSayings.size(); i++) {

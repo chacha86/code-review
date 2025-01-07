@@ -1,5 +1,5 @@
 import wiseSaying.WiseSayingController;
-import wiseSaying.WiseSayingRepository;
+import wiseSaying.repository.WiseSayingFileRepository;
 import wiseSaying.WiseSayingService;
 
 import java.util.Scanner;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        WiseSayingRepository repository = new WiseSayingRepository();
+        WiseSayingFileRepository repository = new WiseSayingFileRepository();
         WiseSayingService service = new WiseSayingService(repository);
         WiseSayingController controller = new WiseSayingController(scanner, service);
 

@@ -20,6 +20,10 @@ public class WiseSaying {
         this.author = author;
     }
 
+    public boolean isNew() {
+        return this.id == 0;
+    }
+
     @Override
     public String toString() {
         return "%d / %s / %s".formatted(id, author, content);
@@ -42,8 +46,6 @@ public class WiseSaying {
         String author = items[2].split(":")[1].trim();
         return new WiseSaying(id, content, author);
     }
-
-
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<>();
