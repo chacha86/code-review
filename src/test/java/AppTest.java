@@ -1,4 +1,5 @@
 
+import common.utils.TestUtil;
 import wiseSaying.WiseSayingController;
 import wiseSaying.WiseSayingRepository;
 import wiseSaying.WiseSayingService;
@@ -15,7 +16,6 @@ import java.util.stream.Stream;
 
 class AppTest {
     private static ByteArrayOutputStream out;
-    private static WiseSayingRepository repository;
     private static final Path tempDbPath = Paths.get("db/testWiseSaying");;
 
     public static void clear() {
@@ -35,7 +35,7 @@ class AppTest {
         Scanner scanner = TestUtil.genScanner(input);
         out = TestUtil.setOutToByteArray();
 
-        repository = new WiseSayingRepository(tempDbPath);
+        WiseSayingRepository repository = new WiseSayingRepository(tempDbPath);
         WiseSayingService service = new WiseSayingService(repository);
         WiseSayingController controller = new WiseSayingController(scanner, service);
 

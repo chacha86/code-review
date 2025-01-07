@@ -19,17 +19,18 @@ public class WiseSayingControllerTest {
 
     @Test
     @DisplayName("프로그램을 종료할 수 있다.")
-    void 종료() {
+    void exit() {
         String out = AppTest.run("""
                 종료
                 """);
 
-        assertThat(out).isEqualTo("== 명언 앱 ==\n명령) ");
+        assertThat(out)
+                .containsSubsequence("== 명언 앱 ==\n명령) ", "명언 앱을 종료합니다.");
     }
 
     @Test
     @DisplayName("종료 명령어 입력 전까진 프로그램이 종료되지 않는다.")
-    void 미종료() {
+    void nonExit() {
         String out = AppTest.run("""
                 테스트
                 미종료
@@ -39,7 +40,7 @@ public class WiseSayingControllerTest {
 
     @Test
     @DisplayName("명언을 등록할 수 있다.")
-    void 등록() {
+    void register() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -47,16 +48,17 @@ public class WiseSayingControllerTest {
                 """);
 
         assertThat(out)
-                .startsWith("== 명언 앱 ==")
-                .contains("명령) ")
-                .contains("명언 : ")
-                .contains("작가 : ")
-                .contains("번 명언이 등록되었습니다.");
+                .containsSubsequence(
+                        "== 명언 앱 ==",
+                        "명령) ",
+                        "명언 : ",
+                        "작가 : ",
+                       "번 명언이 등록되었습니다." );
     }
 
     @Test
     @DisplayName("명언을 여러 번 등록할 수 있다.")
-    void 등록2() {
+    void registerTwice() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -67,13 +69,12 @@ public class WiseSayingControllerTest {
                 """);
 
         assertThat(out)
-                .contains("1번 명언이 등록되었습니다.")
-                .contains("2번 명언이 등록되었습니다.");
+                .containsSubsequence("1번 명언이 등록되었습니다.", "2번 명언이 등록되었습니다.");
     }
 
     @Test
     @DisplayName("명언 목록을 확인할 수 있다.")
-    void 목록() {
+    void list() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -85,15 +86,16 @@ public class WiseSayingControllerTest {
                 """);
 
         assertThat(out)
-            .contains("번호 / 작가 / 명언")
-            .contains("----------------------")
-            .contains("1 / 작자미상 / 현재를 사랑하라.")
-            .contains("2 / 홍길동 / 미래를 사랑하라.");
+            .containsSubsequence(
+                    "번호 / 작가 / 명언",
+                    "----------------------",
+                    "2 / 홍길동 / 미래를 사랑하라.",
+                    "1 / 작자미상 / 현재를 사랑하라.");
     }
 
     @Test
     @DisplayName("명언을 id로 삭제할 수 있다.")
-    void 삭제() {
+    void delete() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -107,7 +109,7 @@ public class WiseSayingControllerTest {
 
     @Test
     @DisplayName("존재하지 않은 명언은 삭제할 수 없다.")
-    void 삭제2() {
+    void deleteNotExist() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -121,7 +123,7 @@ public class WiseSayingControllerTest {
 
     @Test
     @DisplayName("명언을 수정할 수 있다.")
-    void 수정() {
+    void update() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -129,18 +131,22 @@ public class WiseSayingControllerTest {
                 수정?id=1
                 자신을 사랑하라.
                 이순신
+                목록
                 """);
 
         assertThat(out)
-                .contains("명언(기존) : 현재를 사랑하라.")
-                .contains("명언 : ")
-                .contains("작가(기존) : 작자미상")
-                .contains("작가 : ");
+                .doesNotContain("1 / 작자미상 / 현재를 사랑하라.")
+                .containsSubsequence(
+                        "명언(기존) : 현재를 사랑하라.",
+                        "명언 : ",
+                        "작가(기존) : 작자미상",
+                        "작가 : ",
+                        "1 / 이순신 / 자신을 사랑하라.");
     }
 
     @Test
     @DisplayName("존재하지 않은 명언은 수정할 수 없다.")
-    void 수정2() {
+    void updateNotExist() {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -156,7 +162,7 @@ public class WiseSayingControllerTest {
 
     @Test
     @DisplayName("data.json 파일을 빌드할 수 있다.")
-    void 빌드() throws IOException {
+    void build() throws IOException {
         String out = AppTest.run("""
                 등록
                 현재를 사랑하라.
@@ -168,13 +174,19 @@ public class WiseSayingControllerTest {
                 """);
         Path dataPath = Path.of("db/testWiseSaying/data.json");
         String dataContent = Files.readString(dataPath);
-        assertThat(dataContent).isEqualTo("[\n\t" +
-                "{\n\t\t\"id\": 1," +
-                "\n\t\t\"content\": \"현재를 사랑하라.\"," +
-                "\n\t\t\"author\": \"작자미상\"\n\t},\n\t" +
-                "{\n\t\t\"id\": 2," +
-                "\n\t\t\"content\": \"미래를 사랑하라.\"," +
-                "\n\t\t\"author\": \"홍길동\"\n\t}\n]");
+        assertThat(dataContent).isEqualTo("""
+                        [
+                        \t{
+                        \t\t"id": 1,
+                        \t\t"content": "현재를 사랑하라.",
+                        \t\t"author": "작자미상"
+                        \t},
+                        \t{
+                        \t\t"id": 2,
+                        \t\t"content": "미래를 사랑하라.",
+                        \t\t"author": "홍길동"
+                        \t}
+                        ]""");
         assertThat(out)
             .contains("data.json 파일의 내용이 갱신되었습니다.");
     }
