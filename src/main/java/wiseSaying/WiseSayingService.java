@@ -1,6 +1,8 @@
 package wiseSaying;
 
+import wiseSaying.repository.RepositoryProvider;
 import wiseSaying.repository.WiseSayingFileRepository;
+import wiseSaying.repository.WiseSayingRepository;
 
 import java.util.Comparator;
 import java.util.List;
@@ -8,84 +10,50 @@ import java.util.Optional;
 
 public class WiseSayingService {
 
-    private final WiseSayingFileRepository repository;
+    private final WiseSayingRepository wiseSayingRepository;
 
-    public WiseSayingService(WiseSayingFileRepository repository) {
-        this.repository = repository;
+    public WiseSayingService() {
+        wiseSayingRepository = RepositoryProvider.provide();
     }
 
-    public WiseSaying addOne(String content, String author) {
-        return repository.save(new WiseSaying(content, author));
+    public WiseSaying write(String content, String author) {
+
+        WiseSaying wiseSaying = new WiseSaying(content, author);
+        return wiseSayingRepository.save(wiseSaying);
     }
 
-    public void getAll(int page) {
-        List<WiseSaying> wiseSayingList = repository.findAll();
-        paging(wiseSayingList, page);
+    public Page<WiseSaying> getAllItems(int itemsPerPage, int page) {
+        return wiseSayingRepository.findAll(itemsPerPage, page);
     }
 
-    public boolean deleteOne(int id) {
-        return repository.deleteOneById(id);
+    public boolean delete(int id) {
+        return wiseSayingRepository.deleteById(id);
     }
 
-    public WiseSaying getOne(int id) {
-        return repository.findOneById(id).orElse(null);
+    public Optional<WiseSaying> getItem(int id) {
+        return wiseSayingRepository.findById(id);
     }
 
-    public boolean updateOne(WiseSaying wiseSaying) {
-        return repository.updateOne(wiseSaying);
+    public void modify(WiseSaying wiseSaying, String newContent, String newAuthor) {
+        wiseSaying.setContent(newContent);
+        wiseSaying.setAuthor(newAuthor);
+
+        wiseSayingRepository.save(wiseSaying);
     }
 
     public void build() {
-        List<WiseSaying> wiseSayings = repository.findAll()
-                .stream().sorted(Comparator.comparingInt(WiseSaying::getId)).toList();
-        StringBuilder jsonBuilder = new StringBuilder("[\n");
-        for (int i = 0; i < wiseSayings.size(); i++) {
-            WiseSaying wiseSaying = wiseSayings.get(i);
-            String[] jsonLines = wiseSaying.toJson().split("\n");
-
-            for (int j = 0; j < jsonLines.length; j++) {
-                jsonBuilder.append("\t").append(jsonLines[j]);
-                if (j < jsonLines.length - 1) jsonBuilder.append("\n");
-            }
-
-            if (i < wiseSayings.size() - 1) jsonBuilder.append(",\n");
-            else jsonBuilder.append("\n");
-        }
-        jsonBuilder.append("]");
-
-        repository.saveData(jsonBuilder.toString());
+        wiseSayingRepository.build();
     }
 
-    public void searchWithContent(String keyword, int page) {
-        List<WiseSaying> wiseSayingList = repository.findWhere("content", keyword);
-        paging(wiseSayingList, page);
+    public Page<WiseSaying> search(String ktype, String kw, int itemsPerPage, int page) {
+        return wiseSayingRepository.findByKeyword(ktype, kw, itemsPerPage, page);
     }
 
-    public void searchWithAuthor(String keyword, int page) {
-        List<WiseSaying> wiseSayingList =  repository.findWhere("author", keyword);
-        paging(wiseSayingList, page);
+    public void makeSampleData(int cnt) {
+        wiseSayingRepository.makeSampleData(cnt);
     }
 
-    public void paging(List<WiseSaying> list, int page) {
-        int size = list.size();
-        int offset = (page - 1) * 5;
-        if (list.isEmpty()) return ;
-        if (offset < 0 || offset > size - 1) {
-            System.out.println("요청하신 페이지에 데이터가 없습니다.");
-            return;
-        }
-        list.subList(offset, Math.min(offset + 5, size)).forEach(System.out::println);
-        System.out.println("----------------------");
-        System.out.print("페이지 : ");
-        int pageSize = (int) Math.ceil((double)size / 5);
-        for (int i = 1; i < pageSize + 1; i++) {
-            if (i == page) {
-                System.out.print("[" + i + "]");
-            } else {
-                System.out.print(i);
-            }
-            if (i < pageSize) System.out.print(" / ");
-        }
-        System.out.print("\n");
+    public int count() {
+        return wiseSayingRepository.count();
     }
 }

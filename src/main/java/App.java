@@ -1,44 +1,45 @@
+import common.global.Command;
 import wiseSaying.SystemController;
 import wiseSaying.WiseSayingController;
 
 import java.util.Scanner;
 
 public class App {
-    private final Scanner scanner;
-    private final WiseSayingController controller;
+
+    private final Scanner sc;
+    private final WiseSayingController wiseSayingController;
     private final SystemController systemController;
 
-    public App(Scanner scanner, WiseSayingController controller) {
-        this.scanner = scanner;
-        this.controller = controller;
-        this.systemController = new SystemController();
+    public App(Scanner sc) {
+        this.sc = sc;
+        wiseSayingController = new WiseSayingController(sc);
+        systemController = new SystemController();
     }
 
     public void run() {
         System.out.println("== 명언 앱 ==");
-        System.out.print("명령) ");
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            if (command.equals("종료")) {
-                systemController.exit();
-                break;
-            } else if (command.equals("등록")) {
-                controller.register();
-            } else if (command.equals("목록")) {
-                controller.printList(1);
-            } else if (command.startsWith("목록?")) {
-                controller.queryList(command);
-            } else if (command.startsWith("삭제")) {
-                controller.delete(command);
-            } else if (command.startsWith("수정")) {
-                controller.update(command);
-            } else if (command.equals("빌드")) {
-                controller.build();
-            } else {
-                System.out.println("알 수 없는 명령입니다.");
+        while (true) {
+            System.out.println("명령 ) ");
+            String cmd = sc.nextLine();
+
+            Command command = new Command(cmd);
+            String actionName = command.getActionName();
+
+            switch (actionName) {
+                case "종료" -> systemController.exit();
+                case "등록" -> wiseSayingController.actionWrite();
+                case "목록" -> wiseSayingController.actionPrint(command);
+                case "삭제" -> wiseSayingController.actionDelete(command);
+                case "수정" -> wiseSayingController.actionModify(command);
+                case "빌드" -> wiseSayingController.actionBuild();
+                default -> System.out.println("올바른 명령이 아닙니다.");
             }
-            System.out.print("명령) ");
+            if(cmd.equals("종료")) break;
         }
+    }
+
+    public void makeSampleData(int cnt) {
+        wiseSayingController.makeSampleData(cnt);
     }
 }

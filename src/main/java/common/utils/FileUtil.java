@@ -3,11 +3,42 @@ package common.utils;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 public class FileUtil {
 
+        public static void createDir(String dirPath) {
+            try {
+                Files.createDirectories(Paths.get(dirPath));
+            } catch (IOException e) {
+                System.out.println("Failed to create directory: " + e.getMessage());
+            }
+        }
+
         public static void createFile(String file) {
             write(file, "");
+        }
+
+        public static void write(String file, int content) {
+            write(file, String.valueOf(content));
+        }
+
+        public static void write(String file, String content) {
+            Path filePath = Paths.get(file);
+
+            if (filePath.getParent() != null) {
+                createDir(filePath.getParent().toString());
+            }
+
+            try {
+                Files.writeString(filePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IOException e) {
+                System.out.println("Failed to write file: " + e.getMessage());
+            }
+        }
+
+        public static Path getPath(String file) {
+            return Paths.get(file);
         }
 
         public static String readAsString(String file) {
@@ -23,39 +54,17 @@ public class FileUtil {
             return "";
         }
 
-        public static void write(String file, String content) {
-
+        public static boolean delete(String file) {
             Path filePath = Paths.get(file);
 
-            if (filePath.getParent() != null) {
-                createDir(filePath.getParent().toString());
-            }
-
-            try {
-                Files.writeString(filePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            } catch (IOException e) {
-                System.out.println("Failed to write file: " + e.getMessage());
-            }
-        }
-
-        public static void delete(String file) {
-
-            Path filePath = Paths.get(file);
-
-            if (!Files.exists(filePath)) return;
+            if (!Files.exists(filePath)) return false;
 
             try {
                 Files.delete(filePath);
+                return true;
             } catch (IOException e) {
                 System.out.println("Failed to delete file: " + e.getMessage());
-            }
-        }
-
-        public static void createDir(String dirPath) {
-            try {
-                Files.createDirectories(Paths.get(dirPath));
-            } catch (IOException e) {
-                System.out.println("Failed to create directory: " + e.getMessage());
+                return false;
             }
         }
 
@@ -86,5 +95,20 @@ public class FileUtil {
             } catch (IOException e) {
                 System.err.println("Failed to delete files: " + e.getMessage());
             }
+        }
+
+        public static List<Path> getPaths(String dirPath) {
+            Path filePath = Paths.get(dirPath);
+            try {
+                return Files.walk(filePath).filter(Files::isRegularFile).toList();
+            } catch (IOException e) {
+                System.out.println("Failed to read files: " + e.getMessage());
+            }
+            return List.of();
+        }
+
+        public static boolean exists(String file) {
+            Path filePath = Paths.get(file);
+            return Files.exists(filePath);
         }
     }

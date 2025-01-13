@@ -1,15 +1,16 @@
 package wiseSaying;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import common.utils.JsonUtil;
+import lombok.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class WiseSaying {
     private int id;
     private String content;
@@ -29,35 +30,39 @@ public class WiseSaying {
         return "%d / %s / %s".formatted(id, author, content);
     }
 
-    public String toJson() {
-        return "{\n\t\"id\": " + id + ",\n\t\"content\": \"" + content + "\",\n\t\"author\": \"" + author + "\"\n}";
-    }
+//    public String toJson() {
+//        Map<String, Object> map = new LinkedHashMap<>(Map.of(
+//            "id", id,
+//            "content", content,
+//            "author", author
+//        ));
+//        return JsonUtil.mapToJson(map);
+//    }
 
-    public static WiseSaying fromJson(String json) {
-        String[] items = json
-                .replace("{", "")
-                .replace("}", "")
-                .replace("\"", "")
-                .replace("\n", "")
-                .replace("\t", "")
-                .split(",");
-        int id = Integer.parseInt(items[0].split(":")[1].trim());
-        String content = items[1].split(":")[1].trim();
-        String author = items[2].split(":")[1].trim();
-        return new WiseSaying(id, content, author);
-    }
+//    public static WiseSaying fromJson(String json) {
+//        String[] jsonItems = json
+//                .replaceAll("\\{", "")
+//                .replaceAll("}", "")
+//                .replaceAll("\"", "")
+//                .replaceAll("\n", "")
+//                .replaceAll("\t", "")
+//                .split(",");
+//        int id = Integer.parseInt(jsonItems[0].split(":")[1].trim());
+//        String content = jsonItems[1].split(":")[1].trim();
+//        String author = jsonItems[2].split(":")[1].trim();
+//        return new WiseSaying(id, content, author);
+//    }
 
     public Map<String, Object> toMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", id);
-        map.put("content", content);
-        map.put("author", author);
-
-        return map;
+        return new LinkedHashMap<>(Map.of(
+            "id", id,
+            "content", content,
+            "author", author
+        ));
     }
 
     public static WiseSaying fromMap(Map<String, Object> map) {
-        int id = (int)map.get("id");
+        int id = (int) map.get("id");
         String content = (String) map.get("content");
         String author = (String) map.get("author");
 

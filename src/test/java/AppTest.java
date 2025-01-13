@@ -35,11 +35,7 @@ class AppTest {
         Scanner scanner = TestUtil.genScanner(input);
         out = TestUtil.setOutToByteArray();
 
-        WiseSayingFileRepository repository = new WiseSayingFileRepository(tempDbPath);
-        WiseSayingService service = new WiseSayingService(repository);
-        WiseSayingController controller = new WiseSayingController(scanner, service);
-
-        App app = new App(scanner, controller);
+        App app = new App(scanner);
         app.run();
 
         return out.toString();

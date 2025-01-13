@@ -1,123 +1,142 @@
 package wiseSaying;
 
+import common.global.Command;
+
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class WiseSayingController {
-    private final Scanner scanner;
-    private final WiseSayingService service;
 
-    public WiseSayingController(Scanner scanner, WiseSayingService service) {
-        this.scanner = scanner;
-        this.service = service;
+    private final Scanner sc;
+    private final WiseSayingService wiseSayingService;
+    private int itemsPerPage;
+
+    public WiseSayingController(Scanner sc) {
+        this.sc = sc;
+        wiseSayingService = new WiseSayingService();
+        itemsPerPage = 5;
     }
 
-    public void register() {
-        System.out.print("명언 : ");
+    public void actionWrite() {
+        System.out.println("명언 : ");
+        String content = sc.nextLine();
+        System.out.println("작가 : ");
+        String author = sc.nextLine();
 
-        String content = scanner.nextLine();
-        System.out.print("작가 : ");
-        String author = scanner.nextLine();
-
-        int newId = service.addOne(content, author).getId();
-        System.out.printf("%d번 명언이 등록되었습니다.%n", newId);
+        WiseSaying wiseSaying = wiseSayingService.write(content, author);
+        System.out.println("%d번 명언이 등록되었습니다.".formatted(wiseSaying.getId()));
     }
 
-    public void printList(int page) {
+    public void actionPrint(Command command) {
+
+        int page = command.getParamAsInt("page", 1);
+        Page<WiseSaying> pageContent;
+
+        if(command.isSearchCommand()) {
+
+            String ktype = command.getParam("keywordType");
+            String kw = command.getParam("keyword");
+
+            pageContent = wiseSayingService.search(ktype, kw, itemsPerPage, page);
+
+
+        } else {
+            pageContent = wiseSayingService.getAllItems(itemsPerPage, page);
+        }
+
+        printWiseSayings(pageContent, command);
+    }
+
+    private void printWiseSayings(Page<WiseSaying> pageContent, Command cmd) {
+
+        if(pageContent.getContent().isEmpty()) {
+            System.out.println("등록된 명언이 없습니다.");
+            return;
+        }
+
+        if(cmd.isSearchCommand()) {
+
+            String kwtype = cmd.getParam("keywordType");
+            String kw = cmd.getParam("keyword");
+
+            System.out.println("----------------------");
+            System.out.println("검색타입 : %s".formatted(kwtype));
+            System.out.println("검색어 : %s".formatted(kw));
+            System.out.println("----------------------");
+
+        }
+
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
-        service.getAll(page);
+
+        pageContent.getContent().forEach(w -> {
+            System.out.printf("%d / %s / %s\n", w.getId(), w.getAuthor(), w.getContent());
+        });
+
+        printPage(pageContent.getPage(), pageContent.getTotalPages());
     }
 
-    public void delete(String command) {
-        if (!command.startsWith("삭제?id="))  {
-            System.out.println("삭제 명령 형식이 잘못되었습니다. 예시: 삭제?id=1");
+    private void printPage(int page, int totalPages) {
+
+        for(int i = 1; i <= totalPages; i++) {
+            if(i == page) {
+                System.out.print("[%d]".formatted(i));
+            } else {
+                System.out.print("%d".formatted(i));
+            }
+
+            if(i == totalPages) {
+                System.out.println();
+                break;
+            }
+            System.out.print(" / ");
+        }
+    }
+
+
+    public void actionDelete(Command cmd) {
+
+        int id = cmd.getParamAsInt("id", -1);
+        boolean result = wiseSayingService.delete(id);
+
+        if(!result) {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+        }
+    }
+
+    public void actionModify(Command cmd) {
+        int id = cmd.getParamAsInt("id", -1);
+
+        Optional<WiseSaying> opWiseSaying = wiseSayingService.getItem(id);
+        WiseSaying wiseSaying = opWiseSaying.orElse(null);
+
+        if(wiseSaying == null) {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
             return;
         }
-        try {
-            int id = Integer.parseInt(command.substring(6));
-            boolean isDeleted = service.deleteOne(id);
-            if (isDeleted) {
-                System.out.println(id + "번 명언이 삭제되었습니다.");
-            } else {
-                System.out.println(id + "번 명언은 존재하지 않습니다.");
-            }
-        } catch (NumberFormatException e){
-            System.out.println("잘못된 id 입니다. 정수를 입력해주세요.");
-        }
+
+        System.out.printf("명언(기존) : %s\n", wiseSaying.getContent());
+        System.out.println("명언 : ");
+        String newContent = sc.nextLine();
+
+        System.out.printf("작가(기존) : %s\n", wiseSaying.getAuthor());
+        System.out.println("작가 : ");
+        String newAuthor = sc.nextLine();
+
+        wiseSayingService.modify(wiseSaying, newContent, newAuthor);
+
+        System.out.println("%d번 명언이 수정되었습니다.".formatted(id));
+
     }
 
-    public void update(String command) {
-        if (!command.startsWith("수정?id")) {
-            System.out.println("수정 명령 형식이 잘못되었습니다. 예시: 수정?id=1");
-            return;
-        }
-        try {
-            int id = Integer.parseInt(command.substring(6));
-            WiseSaying wiseSaying = service.getOne(id);
-            if (wiseSaying == null) {
-                System.out.println(id + "번 명언은 존재하지 않습니다.");
-            } else {
-                System.out.println("명언(기존) : "+wiseSaying.getContent());
-                System.out.print("명언 : ");
-                String newContent = scanner.nextLine();
-                wiseSaying.setContent(newContent);
-
-                System.out.println("작가(기존) : "+wiseSaying.getAuthor());
-                System.out.print("작가 : ");
-                String newAuthor = scanner.nextLine();
-                wiseSaying.setAuthor(newAuthor);
-
-                service.updateOne(wiseSaying);
-            }
-        } catch (NumberFormatException e){
-            System.out.println("잘못된 id 입니다. 정수를 입력해주세요.");
-        }
-    }
-
-    public void build() {
-        service.build();
+    public void actionBuild() {
+        wiseSayingService.build();
         System.out.println("data.json 파일의 내용이 갱신되었습니다.");
     }
 
-    public void queryList(String command) {
-        try {
-            String[] queries = command.substring(3).split("&");
-            String keyword = null;
-            String keywordType = null;
-            int page = 1;
-            for (String query : queries) {
-                String key = query.split("=")[0];
-                String value = query.split("=")[1];
-                if (key.equals("keyword")) {
-                    keyword = value;
-                } else if (key.equals("keywordType")) {
-                    keywordType = value;
-                } else if (key.equals("page")) {
-                    page = Integer.parseInt(value);
-                }
-            }
-            if (Objects.isNull(keywordType) && Objects.isNull(keyword)) {
-              printList(page);
-            } else if (Objects.isNull(keywordType) || Objects.isNull(keyword)) {
-                System.out.println("검색 명령 형식이 잘못되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
-            } else if (!keywordType.equals("content") && !keywordType.equals("author")) {
-                System.out.println("keywordType은 content 또는 author 입니다. 예시: 목록?keywordType=content&keyword=검색어");
-            } else {
-                System.out.println("----------------------");
-                System.out.println("검색타입 : " + keywordType);
-                System.out.println("검색어 : " + keyword);
-                System.out.println("----------------------");
-                System.out.println("번호 / 작가 / 명언");
-                System.out.println("----------------------");
-                if (keywordType.equals("content")) {
-                    service.searchWithContent(keyword, page);
-                } else {
-                    service.searchWithAuthor(keyword, page);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("파라미터가 누락되었습니다. 예시: 목록?keywordType=content&keyword=검색어");
-        }
+    public void makeSampleData(int cnt) {
+        wiseSayingService.makeSampleData(cnt);
+        System.out.println("샘플 데이터가 생성되었습니다.");
     }
 }

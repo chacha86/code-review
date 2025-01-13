@@ -1,5 +1,9 @@
 package wiseSaying.repository;
 
+import common.global.AppConfig;
+import common.utils.FileUtil;
+import common.utils.JsonUtil;
+import wiseSaying.Page;
 import wiseSaying.WiseSaying;
 
 import java.io.File;
@@ -11,148 +15,149 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 public class WiseSayingFileRepository implements WiseSayingRepository {
-    private final String LAST_ID_FILE = "/lastId.txt";
-    private final String DATA_FILE = "/data.json";
-    private final Path dbPath;
+
+    private static final String DB_PATH = AppConfig.getDbPath() + "/wiseSaying";
+    private static final String ID_FILE_PATH = DB_PATH + "/lastId.txt";
+    private static final String BUILD_PATH = DB_PATH + "/build/data.json";
 
     public WiseSayingFileRepository() {
-        dbPath = Paths.get("db/wiseSaying");
-        initDatabase();
+        System.out.println("파일 DB 사용");
+        init();
     }
 
-    public WiseSayingFileRepository(Path dbPath) {
-        this.dbPath = dbPath;
-        initDatabase();
-    }
-
-    private void initDatabase() {
-        try {
-            Files.createDirectories(dbPath);
-            Path lastIdFile = Paths.get(dbPath.toString() + LAST_ID_FILE);
-            if (!Files.exists(lastIdFile)) {
-                Files.write(lastIdFile, "0".getBytes());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize database: " + e.getMessage());
+    public void init() {
+        if (!FileUtil.exists(ID_FILE_PATH)) {
+            FileUtil.createFile(ID_FILE_PATH);
         }
-    }
 
-    private int getLastId() {
-        try {
-            Path lastIdFile = Paths.get(dbPath.toString() + LAST_ID_FILE);
-            String content = Files.readString(lastIdFile).trim();
-
-            return Integer.parseInt(content);
-        } catch (IOException e) {
-            return 0;
-        }
-    }
-
-    private void saveLastId(int id) {
-        try {
-            Path lastIdFile = Paths.get(dbPath.toString() + LAST_ID_FILE);
-            Files.writeString(lastIdFile, Integer.toString(id));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save last ID: " + e.getMessage());
+        if (!FileUtil.exists(DB_PATH)) {
+            FileUtil.createDir(DB_PATH);
         }
     }
 
     public WiseSaying save(WiseSaying wiseSaying) {
-        int nextId = getLastId() + 1;
-        wiseSaying.setId(nextId);
-        String json = wiseSaying.toJson();
 
-        try {
-            Path filePath = Paths.get(dbPath.toString() + "/" + nextId + ".json");
-            Files.writeString(filePath, json, StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save wise saying: " + e.getMessage());
+        boolean isNew = wiseSaying.isNew();
+
+        if (isNew) {
+            wiseSaying.setId(getLastId() + 1);
         }
 
-        saveLastId(nextId);
+        JsonUtil.writeAsMap(getFilePath(wiseSaying.getId()), wiseSaying.toMap());
+
+        if (isNew) {
+            setLastId(wiseSaying.getId());
+        }
+
         return wiseSaying;
     }
 
-    public Optional<WiseSaying> findOneById(int id) {
-        Path filePath = Paths.get(dbPath.toString() + "/" + id + ".json");
-        try {
-            String json = Files.readString(filePath);
-            return Optional.of(WiseSaying.fromJson(json));
-        } catch (IOException e) {
+    public Page<WiseSaying> findByKeyword(String ktype, String kw, int itemsPerPage, int page) {
+
+        List<WiseSaying> searchedWiseSayings = findAll().stream()
+                .filter(w -> {
+                    if (ktype.equals("content")) {
+                        return w.getContent().contains(kw);
+                    } else {
+                        return w.getAuthor().contains(kw);
+                    }
+                })
+                .sorted(Comparator.comparing(WiseSaying::getId).reversed()) // 기본은 오름차순. 내림차순
+                .toList();
+
+        return pageOf(searchedWiseSayings, itemsPerPage, page);
+    }
+
+    public Page<WiseSaying> findAll(int itemsPerPage, int page) {
+        List<WiseSaying> sortedWiseSayings = findAll().stream()
+                .sorted(Comparator.comparing(WiseSaying::getId).reversed())
+                .toList();
+
+        return pageOf(sortedWiseSayings, itemsPerPage, page);
+    }
+
+    List<WiseSaying> findAll() {
+        return FileUtil.getPaths(DB_PATH).stream()
+                .map(Path::toString)
+                .filter(path -> path.endsWith(".json"))
+                .map(JsonUtil::readAsMap)
+                .map(WiseSaying::fromMap)
+                .toList();
+
+    }
+
+    private Page<WiseSaying> pageOf(List<WiseSaying> wiseSayings, int itemsPerPage, int page) {
+        int totalItems = wiseSayings.size();
+
+        List<WiseSaying> pageContent = wiseSayings.stream()
+                .skip((long) (page - 1) * itemsPerPage)
+                .limit(itemsPerPage)
+                .toList();
+
+        return new Page<>(pageContent, totalItems, itemsPerPage, page);
+    }
+
+    public boolean deleteById(int id) {
+        return FileUtil.delete(getFilePath(id));
+    }
+
+    public Optional<WiseSaying> findById(int id) {
+        String path = getFilePath(id);
+        Map<String, Object> map = JsonUtil.readAsMap(path);
+
+        if (map.isEmpty()) {
             return Optional.empty();
         }
+
+        return Optional.of(WiseSaying.fromMap(map));
+
     }
 
-    public List<WiseSaying> findAll() {
-        List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (File file : findFilesDescendingId()) {
-            try {
-                String json = Files.readString(file.toPath());
-                wiseSayings.add(WiseSaying.fromJson(json));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read file: " + e.getMessage());
-            }
+    public static String getFilePath(int id) {
+        return DB_PATH + "/" + id + ".json";
+    }
 
+    public int getLastId() {
+        String idStr = FileUtil.readAsString(ID_FILE_PATH);
+
+        if (idStr.isEmpty()) {
+            return 0;
         }
-        return wiseSayings;
-    }
 
-    public List<WiseSaying> findWhere(String key, String keyword) {
-        List<WiseSaying> wiseSayings = new ArrayList<>();
-        for (File file : findFilesDescendingId()) {
-            try {
-                String json = Files.readString(file.toPath());
-                WiseSaying wiseSaying = WiseSaying.fromJson(json);
-                boolean containKeyword = (key.equals("content") && wiseSaying.getContent().contains(keyword)) ||
-                        (key.equals("author") && wiseSaying.getAuthor().contains(keyword));
-                if (containKeyword) {
-                   wiseSayings.add(wiseSaying);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read file: " + e.getMessage());
-            }
-
-        }
-        return wiseSayings;
-    }
-
-    public boolean deleteOneById(int id) {
-        Path filePath = Paths.get(dbPath.toString() + "/" + id + ".json");
         try {
-            return Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            return false;
+            return Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
-    public boolean updateOne(WiseSaying wiseSaying) {
-        Path filePath = Paths.get(dbPath.toString() + "/" + wiseSaying.getId() + ".json");
-        String json = wiseSaying.toJson();
-        try {
-            Files.writeString(filePath, json);
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+    public void setLastId(int id) {
+        FileUtil.write(ID_FILE_PATH, id);
     }
 
-    public void saveData(String data) {
-        try {
-            Path dataFile = Paths.get(dbPath.toString() + DATA_FILE);
-            Files.writeString(dataFile, data);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to build data.json: " + e.getMessage());
-        }
-    }
+    public void build() {
 
-    private List<File> findFilesDescendingId() {
-        return Arrays.stream(Objects.requireNonNull(dbPath.toFile().listFiles()))
-                .filter((file) -> file.getName().endsWith(".json") && !file.getName().equals("data.json"))
-                .sorted((file1, file2) -> {
-                    int id1 = Integer.parseInt(file1.getName().replace(".json", ""));
-                    int id2 = Integer.parseInt(file2.getName().replace(".json", ""));
-                    return Integer.compare(id2, id1);
-                })
+        List<Map<String, Object>> mapList = findAll().stream()
+                .map(WiseSaying::toMap)
                 .toList();
+
+        String jsonStr = JsonUtil.listToJson(mapList);
+        FileUtil.write(BUILD_PATH, jsonStr);
+    }
+
+    @Override
+    public void makeSampleData(int cnt) {
+        for (int i = 1; i <= cnt; i++) {
+            WiseSaying wiseSaying = new WiseSaying("명언" + i, "작가" + i);
+            save(wiseSaying);
+        }
+    }
+
+    public static String getBuildPath() {
+        return BUILD_PATH;
+    }
+
+    public int count() {
+        return findAll().size();
     }
 }

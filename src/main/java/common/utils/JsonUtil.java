@@ -2,10 +2,30 @@ package common.utils;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JsonUtil {
+
+    public static String listToJson(List<Map<String, Object>> mapList) {
+        StringBuilder jsonBuilder = new StringBuilder();
+
+        jsonBuilder.append("[\n");
+
+        String str = mapList.stream() // map들이 들어있다
+                .map(JsonUtil::mapToJson)
+                .map(s -> "    " + s)
+                .map(s -> s.replaceAll("\n", "\n    "))
+                .collect(Collectors.joining(",\n"));
+
+        jsonBuilder.append(str);
+        jsonBuilder.append("\n]");
+
+        return jsonBuilder.toString();
+    }
+
+
     public static String mapToJson(Map<String, Object> map) {
 
         StringBuilder jsonBuilder = new StringBuilder();
@@ -14,8 +34,8 @@ public class JsonUtil {
 
         String str = map.keySet().stream()
                 .map(k -> map.get(k) instanceof String
-                        ? "    \"%s\" : \"%s\"".formatted(k, map.get(k))
-                        : "    \"%s\" : %s".formatted(k, map.get(k))
+                        ? "\t\"%s\" : \"%s\"".formatted(k, map.get(k))
+                        : "\t\"%s\" : %s".formatted(k, map.get(k))
                 ).collect(Collectors.joining(",\n"));
 
         jsonBuilder.append(str);
@@ -31,6 +51,10 @@ public class JsonUtil {
 
     public static Map<String, Object> readAsMap(String filePath) {
         String jsonStr = FileUtil.readAsString(filePath);
+
+        if (jsonStr.isEmpty()) {
+            return new LinkedHashMap<>();
+        }
         return jsonToMap(jsonStr);
     }
 
